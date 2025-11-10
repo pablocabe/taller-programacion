@@ -1,0 +1,165 @@
+programa parcial2
+procesos
+
+  proceso girar
+  comenzar
+    repetir 2
+      derecha
+  fin
+
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robotA1)
+    EnviarMensaje (2, robotA2)
+    EnviarMensaje (3, robotB1)
+    EnviarMensaje (4, robotB2)
+  fin
+
+
+  proceso juntarFlores (ES cantFlores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+
+
+  proceso depositarFlores (E cantFlores: numero)
+  variables
+    avenida, calle: numero
+  comenzar
+    avenida := PosAv
+    calle := PosCa
+    repetir cantFlores
+      BloquearEsquina (20, 20)
+      Pos (20, 20)
+      depositarFlor
+      Pos (avenida, calle)
+      LiberarEsquina (20, 20)
+  fin
+
+
+  proceso recorrerTramo1 (ES cantFlores: numero)
+  comenzar
+    repetir 10
+      juntarFlores (cantFlores)
+      mover
+  fin
+
+
+  proceso recorrerTramo2 (ES cantFlores: numero)
+  comenzar
+    repetir 9
+      juntarFlores (cantFlores)
+      mover
+  fin
+
+
+  proceso informarMaximo (E cantA: numero ; E cantB: numero)
+  comenzar
+    si (cantA > cantB)
+      Informar (cantA)
+    sino
+      Informar (cantB)
+  fin
+
+
+areas
+  esquinaFiscalizador: AreaP (30, 1, 30, 1)
+  esquinaDeposito: AreaPC (20, 20, 20, 20)
+  ciudadA: AreaPC (1, 1, 11, 11)
+  ciudadB: AreaPC (13, 1, 23, 11)
+robots
+
+  robot tipoFiscalizador
+  variables
+    ID, cantA, cantB, cantAux: numero
+  comenzar
+    asignarIDs
+    cantA := 0
+    cantB := 0
+    repetir 4
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (cantAux, robotA1)
+        cantA := cantA + cantAux
+      sino
+        si (ID = 2)
+          RecibirMensaje (cantAux, robotA2)
+          cantA := cantA + cantAux
+        sino
+          si (ID = 3)
+            RecibirMensaje (cantAux, robotB1)
+            cantB := cantB + cantAux
+          sino
+            RecibirMensaje (cantAux, robotB2)
+            cantB := cantB + cantAux
+    informarMaximo (cantA, cantB)
+  fin
+
+
+  robot tipo1
+  variables
+    ID, cantFlores: numero
+  comenzar
+    cantFlores := 0
+    RecibirMensaje (ID, robotFiscalizador)
+    recorrerTramo1 (cantFlores)
+    derecha
+    recorrerTramo1 (cantFlores)
+    juntarFlores (cantFlores)
+    depositarFlores (cantFlores)
+    EnviarMensaje (ID, robotFiscalizador)
+    EnviarMensaje (cantFlores, robotFiscalizador)
+    si (ID = 1)
+      EnviarMensaje (V, robotA2)
+    sino
+      EnviarMensaje (V, robotB2)
+  fin
+  
+
+  robot tipo2
+  variables
+    ok: boolean
+    ID, cantFlores: numero
+  comenzar
+    RecibirMensaje (ID, robotFiscalizador)
+    si (ID = 2)
+      RecibirMensaje (ok, robotA1)
+    sino
+      RecibirMensaje (ok, robotB1)
+    girar
+    recorrerTramo2 (cantFlores)
+    derecha
+    recorrerTramo2 (cantFlores)
+    juntarFlores (cantFlores)
+    depositarFlores (cantFlores)
+    EnviarMensaje (ID, robotFiscalizador)
+    EnviarMensaje (cantFlores, robotFiscalizador)
+  fin
+
+
+
+variables
+  robotFiscalizador: tipoFiscalizador
+  robotA1: tipo1
+  robotA2: tipo2
+  robotB1: tipo1
+  robotB2: tipo2
+comenzar
+  AsignarArea (robotFiscalizador, esquinaFiscalizador)
+  AsignarArea (robotA1, ciudadA)
+  AsignarArea (robotA2, ciudadA)
+  AsignarArea (robotB1, ciudadB)
+  AsignarArea (robotB2, ciudadB)
+  AsignarArea (robotA1, esquinaDeposito)
+  AsignarArea (robotA2, esquinaDeposito)
+  AsignarArea (robotB1, esquinaDeposito)
+  AsignarArea (robotB2, esquinaDeposito)
+  Iniciar (robotFiscalizador, 30, 1)
+  Iniciar (robotA1, 1, 1)
+  Iniciar (robotA2, 11, 10)
+  Iniciar (robotB1, 13, 1)
+  Iniciar (robotB2, 23, 10)
+fin

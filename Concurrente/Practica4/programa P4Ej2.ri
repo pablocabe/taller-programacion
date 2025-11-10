@@ -1,0 +1,113 @@
+programa P4Ej2
+procesos
+
+  proceso juntarPapeles (ES cantP: numero ; E avenida: numero ; E calle: numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      si (cantP < 5)
+        tomarPapel
+        cantP := cantP + 1
+      si (cantP = 5)
+        depositarPapeles (avenida, calle)
+        cantP := 0
+  fin
+
+
+  proceso depositarPapeles (E avenida: numero ; E calle: numero)
+  comenzar
+    avenida := PosAv
+    calle := PosCa
+    BloquearEsquina (50, 50)
+    Pos (50, 50)
+    repetir 5
+      depositarPapel
+    Pos (avenida, calle)
+    LiberarEsquina (50, 50)
+  fin
+
+
+  proceso chequearCantidades (E cantRandom: numero ; ES cantIntentosFallados: numero ; ES ok: boolean)
+  variables
+    cantTomados: numero
+  comenzar
+    cantTomados := 0
+    mientras (HayPapelEnLaEsquina) & (cantTomados <= cantRandom)
+      tomarPapel
+      cantTomados := cantTomados + 1
+    si (cantTomados < cantRandom)
+      cantIntentosFallados := cantIntentosFallados + 1
+      ok := F
+      repetir cantTomados
+        depositarPapel
+    sino
+      cantIntentosFallados := 0
+      ok := V
+  fin
+
+
+  proceso accederDeposito (E cantRandom: numero ; E avenida: numero ; E calle: numero ; ES cantIntentosFallados: numero ; ES ok: boolean)
+  comenzar
+    BloquearEsquina (50, 50)
+    Pos (50, 50)
+    chequearCantidades (cantRandom, cantIntentosFallados, ok)
+    Pos (avenida, calle)
+    LiberarEsquina (50, 50)
+  fin
+
+
+areas
+  esquinaCompartida: AreaC (50, 50, 50, 50)
+  ciudadProductor1: AreaP (5, 1, 5, 100)
+  ciudadProductor2: AreaP (10, 1, 10, 100)
+  ciudadConsumidor1: AreaP (11, 1, 11, 1)
+  ciudadConsumidor2: AreaP (12, 1, 12, 1)
+robots
+
+  robot tipoProductor
+  variables
+    cantP, avenida, calle: numero
+  comenzar
+    cantP := 0
+    mientras (PosCa < 100)
+      juntarPapeles (cantP, avenida, calle)
+      mover
+    juntarPapeles (cantP, avenida, calle)
+  fin
+
+
+  robot tipoConsumidor
+  variables
+    ok: boolean
+    cantRandom, cantIntentosFallados, avenida, calle: numero
+  comenzar
+    cantIntentosFallados := 0
+    avenida := PosAv
+    calle := PosCa
+    mientras (cantIntentosFallados < 8)
+      Random (cantRandom, 2, 5)
+      accederDeposito (cantRandom, avenida, calle, cantIntentosFallados, ok)
+      si (ok)
+        repetir cantRandom
+          depositarPapel
+  fin
+    
+
+variables
+  robotProductor1: tipoProductor
+  robotProductor2: tipoProductor
+  robotConsumidor1: tipoConsumidor
+  robotConsumidor2: tipoConsumidor
+comenzar
+  AsignarArea (robotProductor1, ciudadProductor1)
+  AsignarArea (robotProductor2, ciudadProductor2)
+  AsignarArea (robotConsumidor1, ciudadConsumidor1)
+  AsignarArea (robotConsumidor2, ciudadConsumidor2)
+  AsignarArea (robotProductor1, esquinaCompartida)
+  AsignarArea (robotProductor2, esquinaCompartida)
+  AsignarArea (robotConsumidor1, esquinaCompartida)
+  AsignarArea (robotConsumidor2, esquinaCompartida)
+  Iniciar (robotProductor1, 5, 1)
+  Iniciar (robotProductor2, 10, 1)
+  Iniciar (robotConsumidor1, 11, 1)
+  Iniciar (robotConsumidor2, 12, 1)
+fin

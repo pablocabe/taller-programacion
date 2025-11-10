@@ -1,0 +1,148 @@
+programa parcial7
+
+procesos
+  
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, T1)
+    EnviarMensaje (2, T2)
+    EnviarMensaje (3, T3)
+  fin
+  
+  
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+  
+  
+  proceso recorrerLado (ES cantF: numero)
+  comenzar
+    repetir 5
+      juntarFlores (cantF)
+      mover
+  fin
+  
+  
+  proceso checkMax (E ID: numero ; ES IDGanador: numero ; ES cantMax: numero ; E cantAux: numero)
+  comenzar
+    si (cantAux > cantMax)
+      cantMax := cantAux
+      IDGanador := ID
+  fin
+  
+  
+  proceso depositarFlores (E cantF: numero)
+  variables
+    avInicial, caInicial: numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    repetir cantF
+      BloquearEsquina (10, 10)
+      Pos (10, 10)
+      depositarFlor
+      Pos (avInicial, caInicial)
+      LiberarEsquina (10, 10)
+  fin
+  
+  
+  proceso avisarPerdedores (E IDGanador: numero)
+  comenzar
+    si (IDGanador = 1)
+      EnviarMensaje (F, T1)
+      EnviarMensaje (V, T2)
+      EnviarMensaje (V, T3)
+    sino
+      si (IDGanador = 2)
+        EnviarMensaje (V, T1)
+        EnviarMensaje (F, T2)
+        EnviarMensaje (V, T3)
+      sino
+        EnviarMensaje (V, T1)
+        EnviarMensaje (V, T2)
+        EnviarMensaje (F, T3)
+  fin
+  
+areas
+  esquinaCoordinador: AreaP (20, 1, 20, 1)
+  esquinaDeposito: AreaPC (10, 10, 10, 10)
+  areaT1: AreaP (1, 1, 6, 6)
+  areaT2: AreaP (7, 1, 12, 6)
+  areaT3: AreaP (13, 1, 18, 6)
+  
+robots 
+
+  robot tipoCoordinador
+  variables
+    ok: boolean
+    ID, IDGanador, cantMax, cantAux: numero
+  comenzar
+    asignarIDs
+    cantMax := 0
+    IDGanador := 0
+    repetir 4
+      repetir 3
+        RecibirMensaje (ok, *)
+      EnviarMensaje (V, T1)
+      EnviarMensaje (V, T2)
+      EnviarMensaje (V, T3)
+    repetir 3
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (cantAux, T1)
+        checkMax (ID, IDGanador, cantMax, cantAux)
+      sino
+        si (ID = 2)
+          RecibirMensaje (cantAux, T2)
+          checkMax (ID, IDGanador, cantMax, cantAux)
+        sino
+          RecibirMensaje (cantAux, T3)
+          checkMax (ID, IDGanador, cantMax, cantAux)
+    Informar ('Robot Ganador ', IDGanador)
+    avisarPerdedores (IDGanador)
+  fin  
+  
+  
+  robot tipoTrabajador
+  variables
+    seguir, resultado: boolean
+    ID, cantF, IDGanador, cantMax, cantAux: numero
+  comenzar
+    cantF := 0
+    cantMax := 0
+    IDGanador := 0
+    RecibirMensaje (ID, coordinador)
+    repetir 4
+      recorrerLado (cantF)
+      derecha
+      EnviarMensaje (V, coordinador)
+      RecibirMensaje (seguir, coordinador)
+    EnviarMensaje (ID, coordinador)
+    EnviarMensaje (cantF, coordinador)
+    RecibirMensaje (resultado, coordinador)
+    si (resultado)
+      depositarFlores (cantF)
+  fin
+
+  
+variables
+  coordinador: tipoCoordinador
+  T1: tipoTrabajador
+  T2: tipoTrabajador
+  T3: tipoTrabajador
+comenzar
+  AsignarArea(coordinador, esquinaCoordinador)
+  AsignarArea (T1, areaT1) 
+  AsignarArea (T2, areaT2)
+  AsignarArea (T3, areaT3)
+  AsignarArea (T1, esquinaDeposito)
+  AsignarArea (T2, esquinaDeposito)
+  AsignarArea (T3, esquinaDeposito)
+  Iniciar(coordinador, 20, 1) 
+  Iniciar(T1, 1, 1) 
+  Iniciar(T2, 7, 1)
+  Iniciar(T3, 13, 1)
+fin 

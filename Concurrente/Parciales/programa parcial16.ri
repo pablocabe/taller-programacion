@@ -1,0 +1,124 @@
+programa parcial16
+
+procesos
+  
+  proceso asignarIDs 
+  comenzar
+    EnviarMensaje (1, F1) 
+    EnviarMensaje (2, F2) 
+  fin
+  
+  
+  proceso juntarFlores (ES cantFlores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  
+  proceso procesarEsquinaConflictivaF1 (ES cantFlores: numero)
+  comenzar
+    BloquearEsquina (PosAv, calleX)
+    mover
+    juntarFlores (cantFlores)
+    mover
+    LiberarEsquina (PosAv, calleX)
+  fin
+  
+  
+  proceso realizarRecorridoF1 (ES cantFlores: numero ; E calleX: numero ; E ID: numero)
+  comenzar
+    repetir 58
+      juntarFlores (cantFlores)
+      si (PosCa = calleX-1)
+        procesarEsquinaConflictivaF1 (cantFlores, calleX)
+        EnviarMensaje (ID, fiscalizador)
+      sino
+        mover
+    juntarFlores (cantFlores)
+    EnviarMensaje (cantFlores, fiscalizador)
+  fin 
+  
+  
+  proceso realizarRecorridoF2 (ES cantFlores: numero ; E ID: numero)
+  variables 
+    avenida: numero  
+  comenzar 
+    repetir 4 
+      juntarFlores (cantFlores) 
+      mover 
+    avenida := PosAv+1 
+    BloquearEsquina (avenida, PosCa) 
+    mover 
+    juntarFlores (cantFlores)
+    mover 
+    LiberarEsquina (avenida, PosCa)
+    repetir 53
+      juntarFlores (cantFlores)
+      mover 
+    juntarFlores (cantFlores) 
+  fin 
+  
+  
+areas
+  esquinaFiscalizador: AreaP (100, 100, 100, 100) 
+  ciudad: AreaPC (1,1,100,50) 
+  
+robots 
+
+  robot tipoFiscalizador
+  variables
+    IDGanador, IDPerdedor, cantFloresGanador, cantFloresPerdedor: numero
+  comenzar
+    asignarIDs
+    RecibirMensaje (IDGanador, *)
+    si (IDGanador = 1)  
+      RecibirMensaje (cantFloresGanador, F1) 
+    sino 
+      RecibirMensaje (cantFloresGanador, F2)   
+    RecibirMensaje (IDPerdedor, *)
+    si (IDPerdedor = 1)  
+      RecibirMensaje (cantFloresPerdedor, F1)  
+    sino 
+      RecibirMensaje (cantFloresPerdedor, F2)  
+  fin  
+  
+  
+  robot tipoFlorero1 
+  variables
+    ID, cantFlores, calleX: numero
+  comenzar
+    RecibirMensaje (ID, fiscalizador)
+    cantFlores := 0
+    RecibirMensaje (calleX, F2)
+    realizarRecorridoF1 (cantFlores, calleX, ID)
+  fin
+  
+  
+  robot tipoFlorero2 
+  variables 
+    ID, cantFlores, calleX: numero 
+  comenzar 
+    RecibirMensaje (ID, fiscalizador) 
+    cantFlores := 0 
+    Random (calleX, 2, 50) 
+    derecha 
+    Pos (1, calleX) 
+    EnviarMensaje (calleX, F1) 
+    realizarRecorridoF2 (cantFlores, ID) 
+  fin 
+  
+  
+variables
+  fiscalizador: tipoFiscalizador 
+  F1: tipoFlorero1 
+  F2: tipoFlorero2 
+comenzar
+  AsignarArea(fiscalizador, esquinaFiscalizador) 
+  AsignarArea (F1, ciudad) 
+  AsignarArea (F2, ciudad) 
+  Iniciar(fiscalizador, 100, 100) 
+  Iniciar(F1, 6, 1) 
+  Iniciar(F2, 1, 2) 
+fin 

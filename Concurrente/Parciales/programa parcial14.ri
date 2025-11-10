@@ -1,0 +1,136 @@
+programa parcial14
+procesos
+  
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, R1)
+    EnviarMensaje (2, R2)
+    EnviarMensaje (3, R3)
+  fin
+  
+  
+  proceso realizarCuadrado (ES cantFlores: numero ; E largo: numero)
+  comenzar
+    repetir 4
+      repetir largo
+        juntarFlores (cantFlores)
+        mover
+      derecha
+  fin
+  
+  
+  proceso juntarFlores (ES cantFlores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  
+  proceso informarMaximo (E cantR1: numero ; E cantR2: numero ; E cantR3: numero)
+  variables
+    IDGanador: numero 
+  comenzar
+    si ((cantR1 > cantR2) & (cantR1 > cantR3))
+      IDGanador := 1
+    sino
+      si (cantR2 > cantR1) & (cantR2 > cantR3)
+        IDGanador := 2
+      sino
+        IDGanador := 3
+    Informar (IDGanador)
+  fin
+  
+  
+  proceso depositarFlores (ES cantFlores: numero)
+  variables
+    avInicial, caInicial: numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    repetir cantFlores
+      BloquearEsquina (50, 50)
+      Pos (50, 50)
+      depositarFlor
+      Pos (avInicial, caInicial)
+      LiberarEsquina (50, 50)
+    cantFlores := 0
+  fin
+
+areas
+  esquinaCoordinador: AreaP (100, 100, 100, 100)
+  esquinaDeposito: AreaP (50, 50, 50, 50)
+  areaR1: AreaP (1, 1, 7, 21)
+  areaR2: AreaP (10, 1, 16, 21)
+  areaR3: AreaP (20, 1, 26, 21)
+robots
+
+  robot tipoCoordinador
+  variables
+    ID, largo: numero
+    cantAux, cantR1, cantR2, cantR3: numero
+  comenzar 
+    asignarIDs
+    Random (largo, 1, 6)
+    EnviarMensaje (largo, R1)
+    Random (largo, 1, 6)
+    EnviarMensaje (largo, R2)
+    Random (largo, 1, 6)
+    EnviarMensaje (largo, R3)
+    cantR1 := 0
+    cantR2 := 0
+    cantR3 := 0
+    repetir 9
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (cantAux, R1)
+        cantR1 := cantR1 + cantAux
+      sino
+        si (ID = 2)
+          RecibirMensaje (cantAux, R2)
+          cantR2 := cantR2 + cantAux
+        sino
+          RecibirMensaje (cantAux, R3)
+          cantR3 := cantR3 + cantAux
+    informarMaximo (cantR1, cantR2, cantR3)
+  fin
+  
+  
+  robot tipoRecolector
+  variables
+    ID, largo, salto, cantFlores, cuadradosRealizados: numero
+  comenzar 
+    RecibirMensaje (ID, coordinador) 
+    RecibirMensaje (largo, coordinador)
+    cantFlores := 0
+    salto := largo + 1
+    cuadradosRealizados := 0 
+    repetir 3 
+      realizarCuadrado (cantFlores, largo)
+      depositarFlores (cantFlores)
+      EnviarMensaje (ID, coordinador)
+      EnviarMensaje (cantFlores, coordinador)
+      cuadradosRealizados := cuadradosRealizados + 1
+      si (cuadradosRealizados < 3)
+        Pos (PosAv, PosCa + salto) 
+  fin
+  
+  
+variables 
+  coordinador: tipoCoordinador
+  R1: tipoRecolector
+  R2: tipoRecolector
+  R3: tipoRecolector
+comenzar
+  AsignarArea(coordinador, esquinaCoordinador)
+  AsignarArea (R1, areaR1)
+  AsignarArea (R2, areaR2)
+  AsignarArea (R3, areaR3)
+  AsignarArea (R1, esquinaDeposito)
+  AsignarArea (R2, esquinaDeposito)
+  AsignarArea (R3, esquinaDeposito)
+  Iniciar(coordinador, 100, 100)
+  Iniciar (R1, 1, 1)
+  Iniciar (R2, 10, 1)
+  Iniciar (R3, 20, 1)
+fin

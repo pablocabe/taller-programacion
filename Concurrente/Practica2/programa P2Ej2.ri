@@ -1,0 +1,91 @@
+programa P2Ej2
+procesos
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso contarFlores (ES cantF:numero)
+  variables
+    aux: numero
+  comenzar
+    aux := 0
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      aux := aux + 1
+      cantF := cantF + 1
+    repetir aux
+      depositarFlor
+  fin
+  proceso contarPapeles (ES cantP: numero)
+  variables
+    aux: numero
+  comenzar
+    aux := 0
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      aux := aux + 1
+      cantP := cantP + 1
+    repetir aux
+      depositarPapel
+  fin
+  proceso procesarEsquina (ES cantF: numero; ES cantP: numero)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      contarFlores(cantF)
+    si (HayPapelEnLaEsquina)
+      contarPapeles (cantP)
+  fin
+  proceso recorrerEscalon (E alto: numero; ES cantF: numero; ES cantP: numero)
+  comenzar
+    repetir alto
+      procesarEsquina (cantF, cantP)
+      mover
+    procesarEsquina (cantF, cantP)
+    derecha
+    mover
+    izquierda
+  fin
+areas
+  ciudad1: AreaP (2, 1, 6, 21)
+  ciudad2: AreaP (7, 1, 11, 21)
+  ciudad3: AreaP (12, 1, 16, 21)
+  ciudad4: AreaP (1, 1, 1, 1)
+robots
+  robot tipoJefe
+  variables
+    cantEscalones: numero
+  comenzar
+    repetir 3
+      RecibirMensaje (cantEscalones, *)
+      Informar (cantEscalones)
+  fin
+  robot tipoContador
+  variables
+    alto, cantF, cantP, cantEscalones: numero
+  comenzar
+    Random (alto, 1, 5)
+    cantEscalones := 0
+    repetir 4
+      cantF := 0
+      cantP := 0
+      recorrerEscalon (alto, cantF, cantP)
+      si (cantF > cantP)
+        cantEscalones := cantEscalones + 1
+    EnviarMensaje (cantEscalones, robot4)
+  fin
+variables
+  robot1: tipoContador
+  robot2: tipoContador
+  robot3: tipoContador
+  robot4: tipoJefe
+comenzar
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  AsignarArea (robot4, ciudad4)
+  Iniciar (robot1, 2, 1)
+  Iniciar (robot2, 7, 1)
+  Iniciar (robot3, 12, 1)
+  Iniciar (robot4, 1, 1)
+fin

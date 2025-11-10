@@ -1,0 +1,146 @@
+programa parcial6V1
+
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robotT1)
+    EnviarMensaje (2, robotT2)
+  fin
+  
+  
+  proceso tomarFlores (E randomF: numero)
+  variables
+    avInicial, caInicial: numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    repetir randomF
+      BloquearEsquina (21, 21)
+      Pos (21, 21)
+      tomarFlor
+      Pos (avInicial, caInicial)
+      LiberarEsquina (21, 21)
+  fin
+  
+  
+  proceso tomarPapeles (E randomP: numero)
+  variables
+    avInicial, caInicial: numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    repetir randomP
+      BloquearEsquina (22, 22)
+      Pos (22, 22)
+      tomarPapel
+      Pos (avInicial, caInicial)
+      LiberarEsquina (22, 22)
+  fin
+  
+  
+  proceso depositarFlores (E randomF: numero)
+  comenzar
+    repetir randomF
+      depositarFlor
+  fin
+  
+  
+  proceso depositarPapeles (E randomP: numero)
+  comenzar
+    repetir randomP
+      depositarPapel
+  fin
+  
+  
+  proceso recorrerLado (E longitud: numero ; ES cantObjetos: numero)
+  variables
+    randomF, randomP: numero
+  comenzar
+    repetir longitud
+      Random (randomF, 1, 3)
+      Random (randomP, 1, 3)
+      cantObjetos := cantObjetos + randomF + randomP
+      tomarFlores (randomF)
+      tomarPapeles (randomP)
+      depositarFlores (randomF)
+      depositarPapeles (randomP)
+      mover
+  fin
+  
+  
+  
+areas
+  esquinaFlores: AreaPC (21, 21, 21, 21)
+  esquinaPapeles: AreaPC (22, 22, 22, 22)
+  esquinaCoordinador: AreaP (23, 23, 23, 23)
+  areaT1: AreaP (1, 1, 20, 20)
+  areaT2: AreaP (21, 1, 40, 20)
+  
+robots
+
+  robot tipoCoordinador
+  variables
+    ID, IDGanador, IDPerdedor: numero
+    cantObjetosGanador, cantObjetosPerdedor: numero
+    alto, ancho: numero
+  comenzar 
+    asignarIDs
+    Random (alto, 1, 19)
+    Random (ancho, 1, 19)
+    EnviarMensaje (alto, robotT1)
+    EnviarMensaje (ancho, robotT1)
+    Random (alto, 1, 19)
+    Random (ancho, 1, 19)
+    EnviarMensaje (alto, robotT2)
+    EnviarMensaje (ancho, robotT2)
+    RecibirMensaje (IDGanador, *)
+    si (ID = 1)
+      RecibirMensaje (cantObjetosGanador, robotT1)
+    sino
+      RecibirMensaje (cantObjetosGanador, robotT2)
+    RecibirMensaje (IDPerdedor, *)
+    si (ID = 1)
+      RecibirMensaje (cantObjetosPerdedor, robotT1)
+    sino
+      RecibirMensaje (cantObjetosPerdedor, robotT2)
+    Informar ('Ganador', IDGanador)
+    Informar ('Junto', cantObjetosGanador)
+  fin
+  
+  
+  robot tipoTrabajador
+  variables
+    ID: numero
+    alto, ancho: numero
+    cantObjetos: numero
+  comenzar
+    cantObjetos := 0
+    RecibirMensaje (ID, coordinador)
+    RecibirMensaje (alto, coordinador)
+    RecibirMensaje (ancho, coordinador)
+    repetir 2
+      recorrerLado (alto, cantObjetos)
+      derecha
+      recorrerLado (ancho, cantObjetos)
+      derecha
+    EnviarMensaje (ID, coordinador)
+    EnviarMensaje (cantObjetos, coordinador)
+  fin
+  
+variables
+  coordinador: tipoCoordinador
+  robotT1: tipoTrabajador
+  robotT2: tipoTrabajador
+comenzar
+  AsignarArea(coordinador, esquinaCoordinador)
+  AsignarArea(robotT1, areaT1)
+  AsignarArea(robotT2, areaT2)
+  AsignarArea(robotT1, esquinaFlores)
+  AsignarArea(robotT1, esquinaPapeles)
+  AsignarArea(robotT2, esquinaFlores)
+  AsignarArea(robotT2, esquinaPapeles)
+  Iniciar(coordinador, 23, 23)
+  Iniciar(robotT1, 1, 1)
+  Iniciar(robotT2, 21, 1)
+fin

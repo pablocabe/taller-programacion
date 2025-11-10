@@ -1,0 +1,106 @@
+programa P4Ej4
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robotTrabajador1)
+    EnviarMensaje (2, robotTrabajador2)
+  fin
+
+
+  proceso recogerFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+
+  
+  proceso recogerPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+
+  proceso vaciarBolsa
+  comenzar
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+    mientras HayPapelEnLaBolsa
+      depositarPapel
+  fin
+
+
+areas
+  esquinaJefe: AreaP (1, 1, 1, 1)
+  esquinaR1: AreaP (2, 1, 2, 1)
+  esquinaR2: AreaP (3, 1, 3, 1)
+  ciudadCompartida: AreaPC (2, 2, 100, 100)
+robots
+
+  robot tipoJefe
+  variables
+    ok: boolean
+    ID, tarea, avenida, calle: numero
+  comenzar
+    asignarIDs
+    repetir 10
+      Random (ID, 1, 2)
+      Random (tarea, 1, 3)
+      Random (avenida, 2, 100)
+      Random (calle, 2, 100)
+      si (ID = 1)
+        EnviarMensaje (tarea, robotTrabajador1)
+        EnviarMensaje (avenida, robotTrabajador1)
+        EnviarMensaje (calle, robotTrabajador1)
+      sino
+        EnviarMensaje (tarea, robotTrabajador2)
+        EnviarMensaje (avenida, robotTrabajador2)
+        EnviarMensaje (calle, robotTrabajador2)
+      RecibirMensaje (ok, *)
+    EnviarMensaje (4, robotTrabajador1)
+    EnviarMensaje (4, robotTrabajador2)
+  fin
+
+
+  robot tipoTrabajador
+  variables
+    ID, tarea, x, y, avInicial, caInicial: numero
+  comenzar
+    RecibirMensaje (ID, robotJefe)
+    RecibirMensaje (tarea, robotJefe)
+    mientras (tarea <> 4)
+      RecibirMensaje (x, robotJefe)
+      RecibirMensaje (y, robotJefe)
+      avInicial := PosAv
+      caInicial := PosCa
+      BloquearEsquina (x, y)
+      Pos (x, y)
+      si (tarea = 1)
+        recogerFlores
+      sino
+        si (tarea = 2)
+          recogerPapeles
+        sino
+          vaciarBolsa
+      Pos (avInicial, caInicial)
+      LiberarEsquina (x, y)
+      EnviarMensaje (V, robotJefe)
+      RecibirMensaje (tarea, robotJefe)
+  fin
+    
+
+variables
+  robotJefe: tipoJefe
+  robotTrabajador1: tipoTrabajador
+  robotTrabajador2: tipoTrabajador
+comenzar
+  AsignarArea (robotJefe, esquinaJefe)
+  AsignarArea (robotTrabajador1, esquinaR1)
+  AsignarArea (robotTrabajador2, esquinaR2)
+  AsignarArea (robotTrabajador1, ciudadCompartida)
+  AsignarArea (robotTrabajador2, ciudadCompartida)
+  Iniciar (robotJefe, 1, 1)
+  Iniciar (robotTrabajador1, 2, 1)
+  Iniciar (robotTrabajador2, 3, 1)
+fin

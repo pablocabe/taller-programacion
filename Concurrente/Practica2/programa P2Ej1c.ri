@@ -1,0 +1,67 @@
+programa P2Ej1c
+procesos
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+  proceso recorrerAvenida (ES cantF: numero)
+  comenzar
+    repetir 9
+      juntarFlores (cantF)
+      mover
+    juntarFlores (cantF)
+  fin
+areas
+  ciudad1: AreaP (1, 1, 1, 10)
+  ciudad2: AreaP (2, 11, 2, 20)
+  ciudad3: AreaP (3, 21, 3, 30)
+  ciudad4: AreaP (4, 31, 4, 40)
+  ciudad5: AreaP (5, 41, 5, 50)
+  ciudad6: AreaP (6, 51, 6, 60)
+  ciudad7: AreaP (2, 1, 2, 1)
+robots
+  robot tipoJefe
+  variables
+    cantF, cantMax: numero
+  comenzar
+    cantMax := 0
+    repetir 6
+      RecibirMensaje (cantF, *)
+      si (cantF > cantMax)
+        cantMax := cantF
+    Informar (cantMax)
+  fin
+  robot tipoJuntador
+  variables
+    cantF: numero
+  comenzar
+    cantF := 0
+    recorrerAvenida (cantF)
+    EnviarMensaje (cantF, robot7)
+  fin
+variables
+  robot1: tipoJuntador
+  robot2: tipoJuntador
+  robot3: tipoJuntador
+  robot4: tipoJuntador
+  robot5: tipoJuntador
+  robot6: tipoJuntador
+  robot7: tipoJefe
+comenzar
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  AsignarArea (robot4, ciudad4)
+  AsignarArea (robot5, ciudad5)
+  AsignarArea (robot6, ciudad6)
+  AsignarArea (robot7, ciudad7)
+  Iniciar (robot1, 1, 1)
+  Iniciar (robot2, 2, 11)
+  Iniciar (robot3, 3, 21)
+  Iniciar (robot4, 4, 31)
+  Iniciar (robot5, 5, 41)
+  Iniciar (robot6, 6, 51)
+  Iniciar (robot7, 2, 1)
+fin

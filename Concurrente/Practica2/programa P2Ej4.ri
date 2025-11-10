@@ -1,0 +1,170 @@
+programa P2Ej4
+procesos
+
+  proceso inicializarCantidades (ES cant1: numero; ES cant2: numero ; ES cant3: numero; ES cant4: numero)
+  comenzar
+    cant1 := 0
+    cant2 := 0
+    cant3 := 0
+    cant4 := 0
+  fin
+
+
+  proceso limpiarEsquina (ES cantTotal: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantTotal := cantTotal + 1
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantTotal := cantTotal + 1
+  fin
+
+
+  proceso accederPosicion (ES cantTotal: numero)
+  variables
+    avenida, calle, avenidaInicial, calleInicial: numero
+  comenzar
+    avenidaInicial := PosAv
+    calleInicial := PosCa
+    Random (avenida, 25, 75)
+    Random (calle, 25, 75)
+    Pos (avenida, calle)
+    si (HayFlorEnLaEsquina | HayPapelEnLaEsquina)
+      limpiarEsquina (cantTotal)
+    Pos (avenidaInicial, calleInicial)
+  fin
+
+
+  proceso finalizarProcesos
+  comenzar
+    EnviarMensaje (F, robot1)
+    EnviarMensaje (F, robot2)
+    EnviarMensaje (F, robot3)
+    EnviarMensaje (F, robot4)
+  fin
+
+  proceso obtenerMaximo (E cant1: numero ; E cant2: numero ; E cant3: numero ; E cant4: numero ; ES robotMax: numero)
+  variables
+    cantMax: numero
+  comenzar
+    cantMax := 0
+    si (cant1 > cantMax)
+      robotMax := 1
+      cantMax := cant1
+    si (cant2 > cantMax)
+      robotMax := 2
+      cantMax := cant2
+    si (cant3 > cantMax)
+      robotMax := 3
+      cantMax := cant3
+    si (cant4 > cantMax)
+      robotMax := 4
+      cantMax := cant4
+  fin
+
+  proceso avisarRobot (E ID: numero ; E ok: boolean)
+  comenzar
+    si (ID = 1)
+      EnviarMensaje (ok, robot1)
+    sino
+      si (ID = 2)
+        EnviarMensaje (ok, robot2)
+      sino
+        si (ID = 3)
+          EnviarMensaje (ok, robot3)
+        sino
+          si (ID = 4)
+            EnviarMensaje (ok, robot4)
+  fin
+
+
+areas
+  ciudad1: AreaP (25, 1, 25, 1)
+  ciudad2: AreaP (30, 1, 30, 1)
+  ciudad3: AreaP (35, 1, 35, 1)
+  ciudad4: AreaP (40, 1, 40, 1)
+  ciudadJefe: AreaP (1, 1, 1, 1)
+  ciudadCompartida: AreaPC (25, 25, 75, 75)
+
+robots
+
+  robot tipoJefe
+  variables
+    ok: boolean
+    ID, cant1, cant2, cant3, cant4, robotMax: numero
+  comenzar
+    inicializarCantidades (cant1, cant2, cant3, cant4)
+    repetir 10
+      Random (ID, 1, 4)
+      si (ID = 1)
+        EnviarMensaje (V, robot1)
+        EnviarMensaje (cant1, robot1)
+        RecibirMensaje (cant1, robot1)
+      sino
+        si (ID = 2)
+          EnviarMensaje (V, robot2)
+          EnviarMensaje (cant2, robot2)
+          RecibirMensaje (cant2, robot2)
+        sino
+          si (ID = 3)
+            EnviarMensaje (V, robot3)
+            EnviarMensaje (cant3, robot3)
+            RecibirMensaje (cant3, robot3)
+          sino
+            EnviarMensaje (V, robot4)
+            EnviarMensaje (cant4, robot4)
+            RecibirMensaje (cant4, robot4)
+    finalizarProcesos
+    obtenerMaximo (cant1, cant2, cant3, cant4, robotMax)
+    ID := 1
+    repetir 4
+      si (ID = robotMax)
+        ok := V
+      sino
+        ok := F
+      avisarRobot (ID, ok)
+      ID := ID + 1
+    Informar (robotMax)
+  fin
+
+
+  robot tipoJuntador
+  variables
+    ok, ganador: boolean
+    cantTotal: numero
+  comenzar
+    RecibirMensaje (ok, robotJefe)
+    mientras (ok)
+      RecibirMensaje (cantTotal, robotJefe)
+      accederPosicion (cantTotal)
+      EnviarMensaje (cantTotal, robotJefe)
+      RecibirMensaje (ok, robotJefe)
+    RecibirMensaje (ganador, robotJefe)
+    si (ganador)
+      Pos (50, 50)
+  fin
+
+
+variables
+  robotJefe: tipoJefe
+  robot1: tipoJuntador
+  robot2: tipoJuntador
+  robot3: tipoJuntador
+  robot4: tipoJuntador
+comenzar
+  AsignarArea (robotJefe, ciudadJefe)
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  AsignarArea (robot4, ciudad4)
+  AsignarArea (robot1, ciudadCompartida)
+  AsignarArea (robot2, ciudadCompartida)
+  AsignarArea (robot3, ciudadCompartida)
+  AsignarArea (robot4, ciudadCompartida)
+  Iniciar (robotJefe, 1, 1)
+  Iniciar (robot1, 25, 1)
+  Iniciar (robot2, 30, 1)
+  Iniciar (robot3, 35, 1)
+  Iniciar (robot4, 40, 1)
+fin

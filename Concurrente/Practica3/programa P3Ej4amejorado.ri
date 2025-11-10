@@ -1,0 +1,119 @@
+programa P3Ej4aMejorado
+procesos
+
+  proceso aisgnarIDs
+  comenzar
+    EnviarMensaje (1, robot1)
+    EnviarMensaje (2, robot2)
+    EnviarMensaje (3, robot3)
+    EnviarMensaje (4, robot4)
+  fin
+
+  proceso moverFlor (E avIn: numero ; E caIn: numero)
+  comenzar
+    tomarFlor
+    BloquearEsquina (11, 11)
+    Pos (11, 11)
+    LiberarEsquina (10, 10)
+    depositarFlor
+    Pos (avIn, caIn)
+    LiberarEsquina (11, 11)
+  fin
+
+  proceso trasladarFlor (ES hayFlor: boolean)
+  variables
+    avIn, caIn: numero
+  comenzar
+    avIn := PosAv
+    caIn := PosCa
+    BloquearEsquina (10, 10)
+    Pos (10, 10)
+    si HayFlorEnLaEsquina
+      moverFlor (avIn, caIn)
+    sino
+      Pos (avIn, caIn)
+      LiberarEsquina (10, 10)
+      hayFlor := F
+  fin
+
+
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+
+
+  proceso recolectarFlores
+  comenzar
+    Pos (11, 11)
+    juntarFlores
+    Pos (1, 1)
+  fin
+
+
+areas
+  ciudadCompartida1: AreaPC (10, 10, 10, 10)
+  ciudadCompartida2: AreaPC (11, 11, 11, 11)
+  ciudadCoordinador: AreaP (1, 1, 1, 1)
+  ciudad1: AreaP (9, 9, 9, 9)
+  ciudad2: AreaP (9, 10, 9, 10)
+  ciudad3: AreaP (9, 11, 9, 11)
+  ciudad4: AreaP (9, 12, 9, 12)
+
+robots
+
+  robot tipoCoordinador
+  variables
+    ID: numero
+  comenzar
+    aisgnarIDs
+    repetir 4
+      RecibirMensaje (ID, *)
+    Informar ('Robot', ID)
+    recolectarFlores
+  fin
+
+  
+  robot tipoJuntador
+  variables
+    hayFlor: boolean
+    avIn, caIn, ID: numero
+  comenzar
+    hayFlor := V
+    RecibirMensaje (ID, robotCoordinador)
+    avIn := PosAv
+    caIn := PosCa
+    mientras hayFlor
+      trasladarFlor (hayFlor)
+    EnviarMensaje (ID, robotCoordinador)
+  fin
+
+
+variables
+  robotCoordinador: tipoCoordinador
+  robot1: tipoJuntador
+  robot2: tipoJuntador
+  robot3: tipoJuntador
+  robot4: tipoJuntador
+comenzar
+  AsignarArea (robotCoordinador, ciudadCoordinador)
+  AsignarArea (robotCoordinador, ciudadCompartida2)
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  AsignarArea (robot4, ciudad4)
+  AsignarArea (robot1, ciudadCompartida1)
+  AsignarArea (robot2, ciudadCompartida1)
+  AsignarArea (robot3, ciudadCompartida1)
+  AsignarArea (robot4, ciudadCompartida1)
+  AsignarArea (robot1, ciudadCompartida2)
+  AsignarArea (robot2, ciudadCompartida2)
+  AsignarArea (robot3, ciudadCompartida2)
+  AsignarArea (robot4, ciudadCompartida2)
+  Iniciar (robotCoordinador, 1, 1)
+  Iniciar (robot1, 9, 9)
+  Iniciar (robot2, 9, 10)
+  Iniciar (robot3, 9, 11)
+  Iniciar (robot4, 9, 12)
+fin

@@ -1,0 +1,152 @@
+programa parcial4
+procesos
+  
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robotTrabajador1)
+    EnviarMensaje (2, robotTrabajador2)
+  fin
+  
+  proceso juntarFlores (ES cantFlores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  proceso juntarPapeles (ES cantPapeles: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles := cantPapeles + 1 
+  fin
+  
+  proceso recorrerLado (E longitud: numero ; ES cantF: numero ; ES cantP: numero)
+  comenzar
+    repetir longitud
+      juntarFlores (cantF)
+      juntarPapeles (cantP)
+      mover
+    derecha
+  fin
+  
+  proceso vaciarContenido (ES cantF: numero ; ES cantP: numero ; E ID: numero)
+  variables
+    avInicial, caInicial: numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    depositarFlores (cantF, avInicial, caInicial)
+    depositarPapeles (cantP, avInicial, caInicial)
+    EnviarMensaje (ID, robotCoordinador)
+    EnviarMensaje (cantF, robotCoordinador)
+    EnviarMensaje (cantP, robotCoordinador)
+    cantF := 0
+    cantP := 0
+  fin
+  
+  
+  proceso depositarFlores (E cantF: numero ; E avInicial: numero ; E caInicial: numero)
+  comenzar
+    repetir cantF
+      BloquearEsquina (21, 21)
+      Pos (21, 21)
+      depositarFlor
+      Pos (avInicial, caInicial)
+      LiberarEsquina (21, 21)
+  fin
+  
+  proceso depositarPapeles (E cantP: numero ; E avInicial: numero ; E caInicial: numero)
+  comenzar
+    repetir cantP
+      BloquearEsquina (22, 22)
+      Pos (22, 22)
+      depositarPapel
+      Pos (avInicial, caInicial)
+      LiberarEsquina (22, 22)
+  fin
+  
+  proceso informarMaximos (E f1: numero ; E f2: numero ; E p1: numero ; E p2: numero)
+  comenzar
+    si (f1>f2)
+      Informar ('Junto mas flores el robot1', 1)
+    sino
+      Informar ('Junto mas flores el robot2', 2)
+    si (p1>p2)
+      Informar ('Junto mas papeles el robot1', 1)
+    sino
+      Informar ('Junto mas papeles el robot2', 2)
+  fin
+  
+areas
+  depositoFlores: AreaPC (21, 21, 21, 21)
+  depositoPapeles: AreaPC (22, 22, 22, 22)
+  areaRobot1: AreaP (1, 1, 20, 20)
+  areaRobot2: AreaP (21, 1, 40, 20)
+  esquinaCoordinador: AreaP (23, 23, 23, 23)
+  
+robots
+
+  robot tipoCoordinador
+  variables
+    ID, alto, ancho: numero
+    cantFloresR1, cantFloresR2, cantPapelesR1, cantPapelesR2, cantAux: numero
+  comenzar
+    asignarIDs
+    Random (alto, 1, 19)
+    Random (ancho, 1, 19)
+    EnviarMensaje (alto, robotTrabajador1)
+    EnviarMensaje (ancho, robotTrabajador1)
+    Random (alto, 1, 19)
+    Random (ancho, 1, 19)
+    EnviarMensaje (alto, robotTrabajador2)
+    EnviarMensaje (ancho, robotTrabajador2)
+    cantFloresR1 := 0 
+    cantFloresR2 := 0
+    cantPapelesR1 := 0
+    cantPapelesR2 := 0
+    repetir 8
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (cantAux, robotTrabajador1)
+        cantFloresR1 := cantFloresR1 + cantAux
+        RecibirMensaje (cantAux, robotTrabajador1)
+        cantPapelesR1 := cantPapelesR1 + cantAux
+      sino
+        RecibirMensaje (cantAux, robotTrabajador2)
+        cantFloresR2 := cantFloresR2 + cantAux
+        RecibirMensaje (cantAux, robotTrabajador2)
+        cantPapelesR2 := cantPapelesR2 + cantAux
+    informarMaximos (cantFloresR1, cantFloresR2, cantPapelesR1, cantPapelesR2)
+  fin
+  
+  robot tipoTrabajador
+  variables
+    ID, alto, ancho, cantF, cantP: numero
+  comenzar
+    RecibirMensaje (ID, robotCoordinador)
+    RecibirMensaje (alto, robotCoordinador)
+    RecibirMensaje (ancho, robotCoordinador)
+    repetir 2
+      recorrerLado (alto, cantF, cantP)
+      vaciarContenido (cantF, cantP, ID)
+      recorrerLado (ancho, cantF, cantP)
+      vaciarContenido (cantF, cantP, ID)
+  fin
+  
+variables
+  robotCoordinador: tipoCoordinador
+  robotTrabajador1: tipoTrabajador
+  robotTrabajador2: tipoTrabajador
+comenzar
+  AsignarArea(robotTrabajador1, areaRobot1)
+  AsignarArea(robotTrabajador2, areaRobot2)
+  AsignarArea(robotTrabajador1, depositoFlores)
+  AsignarArea(robotTrabajador1, depositoPapeles)
+  AsignarArea(robotTrabajador2, depositoFlores)
+  AsignarArea(robotTrabajador2, depositoPapeles)
+  AsignarArea(robotCoordinador, esquinaCoordinador)
+  Iniciar(robotTrabajador1, 1, 1)
+  Iniciar(robotTrabajador2, 21, 1)
+  Iniciar(robotCoordinador, 23 ,23)
+fin

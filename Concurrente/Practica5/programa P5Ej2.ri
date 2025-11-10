@@ -1,0 +1,118 @@
+programa P5Ej2
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robotRecolector1)
+    EnviarMensaje (2, robotRecolector2)
+    EnviarMensaje (3, robotRecolector3)
+  fin
+
+
+  proceso juntarFlores (ES cantFlores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+
+  
+  proceso depositarFlores (ES cantFlores: numero)
+  variables
+    avenida, calle: numero
+  comenzar
+    avenida := PosAv
+    calle := PosCa
+    BloquearEsquina (50, 50)
+    Pos (50, 50)
+    repetir cantFlores
+      depositarFlor
+    Pos (avenida, calle)
+    LiberarEsquina (50, 50)
+    cantFlores := 0
+  fin
+
+
+  proceso informarCantFlores
+  variables
+    cantTotal: numero
+  comenzar
+    cantTotal := 0
+    BloquearEsquina (50, 50)
+    Pos (50, 50)
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantTotal := cantTotal + 1
+    Pos (1, 4)
+    LiberarEsquina (50, 50)
+    Informar (cantTotal)
+  fin
+
+
+areas
+  esquinaFiscalizador: AreaP (1, 4, 1, 4)
+  esquinaDeposito: AreaC (50, 50, 50, 50)
+  calleR1: AreaP (1, 1, 100, 1)
+  calleR2: AreaP (1, 2, 100, 2)
+  calleR3: AreaP (1, 3, 100, 3)
+robots
+
+  robot tipoFiscalizador
+  variables
+    ok: boolean
+  comenzar
+    asignarIDs
+    repetir 3
+      RecibirMensaje (ok, *)
+    informarCantFlores
+  fin
+  
+
+  robot tipoRecolector
+  variables
+    ID, cantFlores, num: numero
+  comenzar
+    derecha
+    RecibirMensaje (ID, robotFiscalizador)
+    repetir 10
+      cantFlores := 0
+      repetir 10
+        juntarFlores (cantFlores)
+        si (PosAv < 100)
+          mover
+      depositarFlores (cantFlores)
+      si (ID = 1)
+        EnviarMensaje (1, robotRecolector2)
+        EnviarMensaje (1, robotRecolector3)
+      sino
+        si (ID = 2)
+          EnviarMensaje (2, robotRecolector1)
+          EnviarMensaje (2, robotRecolector3)
+        sino
+          EnviarMensaje (3, robotRecolector1)
+          EnviarMensaje (3, robotRecolector2)
+      repetir 2
+        RecibirMensaje (num, *)
+    EnviarMensaje (V, robotFiscalizador)
+  fin
+
+
+variables
+  robotFiscalizador: tipoFiscalizador
+  robotRecolector1: tipoRecolector
+  robotRecolector2: tipoRecolector
+  robotRecolector3: tipoRecolector
+comenzar
+  AsignarArea (robotFiscalizador, esquinaFiscalizador)
+  AsignarArea (robotFiscalizador, esquinaDeposito)
+  AsignarArea (robotRecolector1, calleR1)
+  AsignarArea (robotRecolector2, calleR2)
+  AsignarArea (robotRecolector3, calleR3)
+  AsignarArea (robotRecolector1, esquinaDeposito)
+  AsignarArea (robotRecolector2, esquinaDeposito)
+  AsignarArea (robotRecolector3, esquinaDeposito)
+  Iniciar (robotFiscalizador, 1, 4)
+  Iniciar (robotRecolector1, 1, 1)
+  Iniciar (robotRecolector2, 1, 2)
+  Iniciar (robotRecolector3, 1, 3)
+fin

@@ -1,0 +1,107 @@
+programa P2Ej3a
+procesos
+
+  proceso juntarPapeles (ES cantP: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantP := cantP + 1
+  fin
+
+
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF +1
+  fin
+
+
+areas
+  ciudadA1: AreaP (1, 1, 10, 1)
+  ciudadA2: AreaP (11, 1, 20, 1)
+  ciudadB1: AreaP (1, 5, 10, 5)
+  ciudadB2: AreaP (11, 5, 20, 5)
+
+robots
+
+  robot tipoA1
+  variables
+    cantP: numero
+  comenzar
+    cantP := 0
+    derecha
+    repetir 9
+      si HayPapelEnLaEsquina
+        juntarPapeles (cantP)
+      mover
+    si HayPapelEnLaEsquina
+      juntarPapeles (cantP)
+    EnviarMensaje (cantP, robotA2)
+  fin
+
+
+  robot tipoA2
+  variables
+    cantP: numero
+  comenzar
+    RecibirMensaje (cantP, robotA1)
+    derecha
+    repetir 9
+      si HayPapelEnLaEsquina
+        juntarPapeles (cantP)
+      mover
+    si HayPapelEnLaEsquina
+      juntarPapeles (cantP)
+    Informar (cantP)
+  fin
+
+
+  robot tipoB1
+  variables
+    cantF: numero
+  comenzar
+    cantF := 0
+    derecha
+    repetir 9
+      si HayFlorEnLaEsquina
+        juntarFlores (cantF)
+      mover
+    si HayFlorEnLaEsquina
+      juntarFlores (cantF)
+    EnviarMensaje (cantF, robotB2)
+  fin
+
+
+  robot tipoB2
+  variables
+    cantF: numero
+  comenzar
+    RecibirMensaje (cantF, robotB1)
+    derecha
+    repetir 9
+      si HayFlorEnLaEsquina
+        juntarFlores (cantF)
+      mover
+    si HayFlorEnLaEsquina
+      juntarFlores (cantF)
+    Informar (cantF)
+  fin
+
+
+variables
+  robotA1: tipoA1
+  robotA2: tipoA2
+  robotB1: tipoB1
+  robotB2: tipoB2
+
+comenzar
+  AsignarArea (robotA1, ciudadA1)
+  AsignarArea (robotA2, ciudadA2)
+  AsignarArea (robotB1, ciudadB1)
+  AsignarArea (robotB2, ciudadB2)
+  Iniciar (robotA1, 1, 1)
+  Iniciar (robotA2, 11, 1)
+  Iniciar (robotB1, 1, 5)
+  Iniciar (robotB2, 11, 5)
+fin

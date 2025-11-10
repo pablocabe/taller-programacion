@@ -1,0 +1,133 @@
+programa P2Ej3b
+procesos
+
+  proceso juntarPapeles (ES cantP: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantP := cantP + 1
+  fin
+
+
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF +1
+  fin
+
+
+  proceso recorrerTramoA (ES cantP: numero)
+  comenzar
+    repetir 9
+      si HayPapelEnLaEsquina
+        juntarPapeles (cantP)
+      mover
+    si HayPapelEnLaEsquina
+      juntarPapeles (cantP)
+  fin
+
+
+  proceso recorrerTramoB (ES cantF: numero)
+  comenzar
+    repetir 9
+      si HayFlorEnLaEsquina
+        juntarFlores (cantF)
+      mover
+    si HayFlorEnLaEsquina
+      juntarFlores (cantF)
+  fin
+
+
+areas
+  ciudadA1a: AreaP (1, 1, 10, 1)
+  ciudadA1b: AreaP (21, 1, 30, 1)
+  ciudadA2a: AreaP (11, 1, 20, 1)
+  ciudadA2b: AreaP (31, 1, 40, 1)
+  ciudadB1a: AreaP (1, 5, 10, 5)
+  ciudadB1b: AreaP (21, 5, 30, 5)
+  ciudadB2a: AreaP (11, 5, 20, 5)
+  ciudadB2b: AreaP (31, 5, 40, 5)
+
+robots
+
+  robot tipoA1
+  variables
+    cantP: numero
+  comenzar
+    cantP := 0
+    derecha
+    recorrerTramoA (cantP)
+    EnviarMensaje (cantP, robotA2)
+    RecibirMensaje (cantP, robotA2)
+    Pos (21, 1)
+    recorrerTramoA (cantP)
+    EnviarMensaje (cantP, robotA2)
+  fin
+
+
+  robot tipoA2
+  variables
+    cantP: numero
+  comenzar
+    RecibirMensaje (cantP, robotA1)
+    derecha
+    recorrerTramoA (cantP)
+    EnviarMensaje (cantP, robotA1)
+    RecibirMensaje (cantP, robotA1)
+    Pos (31, 1)
+    recorrerTramoA (cantP)
+    Informar (cantP)
+  fin
+
+
+  robot tipoB1
+  variables
+    cantF: numero
+  comenzar
+    cantF := 0
+    derecha
+    recorrerTramoB (cantF)
+    EnviarMensaje (cantF, robotB2)
+    RecibirMensaje (cantF, robotB2)
+    Pos (21, 5)
+    recorrerTramoB (cantF)
+    EnviarMensaje (cantF, robotB2)
+  fin
+
+
+  robot tipoB2
+  variables
+    cantF: numero
+  comenzar
+    RecibirMensaje (cantF, robotB1)
+    derecha
+    recorrerTramoB (cantF)
+    EnviarMensaje (cantF, robotB1)
+    RecibirMensaje (cantF, robotB1)
+    Pos (31, 5)
+    recorrerTramoB (cantF)
+    Informar (cantF)
+  fin
+
+
+variables
+  robotA1: tipoA1
+  robotA2: tipoA2
+  robotB1: tipoB1
+  robotB2: tipoB2
+
+comenzar
+  AsignarArea (robotA1, ciudadA1a)
+  AsignarArea (robotA1, ciudadA1b)
+  AsignarArea (robotA2, ciudadA2a)
+  AsignarArea (robotA2, ciudadA2b)
+  AsignarArea (robotB1, ciudadB1a)
+  AsignarArea (robotB1, ciudadB1b)
+  AsignarArea (robotB2, ciudadB2a)
+  AsignarArea (robotB2, ciudadB2b)
+  Iniciar (robotA1, 1, 1)
+  Iniciar (robotA2, 11, 1)
+  Iniciar (robotB1, 1, 5)
+  Iniciar (robotB2, 11, 5)
+fin

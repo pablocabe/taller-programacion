@@ -1,0 +1,76 @@
+programa P4Ej3a
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robotJuntador1)
+    EnviarMensaje (2, robotJuntador2)
+    EnviarMensaje (3, robotJuntador3)
+  fin
+
+
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+
+areas
+  esquinaCoordinador: AreaP (100, 100, 100, 100)
+  avenidaRobot1: AreaP (1, 1, 1, 100)
+  avenidaRobot2: AreaP (2, 1, 2, 100)
+  avenidaRobot3: AreaP (3, 1, 3, 100)
+robots
+
+  robot tipoCoordinador
+  comenzar
+    asignarIDs
+  fin
+
+
+  robot tipoJuntador
+  variables
+    ID, num: numero
+  comenzar
+    RecibirMensaje (ID, robotCoordinador)
+    mientras (PosCa < 100)
+      juntarPapeles
+      repetir 4
+        si (PosCa < 100)
+          mover
+          juntarPapeles
+      si (ID = 1)
+        EnviarMensaje (1, robotJuntador2)
+        EnviarMensaje (1, robotJuntador3)
+        repetir 2
+          RecibirMensaje (num, *)
+      sino
+        si (ID = 2)
+          EnviarMensaje (2, robotJuntador1)
+          EnviarMensaje (2, robotJuntador3)
+          repetir 2
+            RecibirMensaje (num, *)
+        sino
+          EnviarMensaje (3, robotJuntador1)
+          EnviarMensaje (3, robotJuntador2)
+          repetir 2
+            RecibirMensaje (num, *)
+  fin
+    
+
+variables
+  robotCoordinador: tipoCoordinador
+  robotJuntador1: tipoJuntador
+  robotJuntador2: tipoJuntador
+  robotJuntador3: tipoJuntador
+comenzar
+  AsignarArea (robotCoordinador, esquinaCoordinador)
+  AsignarArea (robotJuntador1, avenidaRobot1)
+  AsignarArea (robotJuntador2, avenidaRobot2)
+  AsignarArea (robotJuntador3, avenidaRobot3)
+  Iniciar (robotCoordinador, 100, 100)
+  Iniciar (robotJuntador1, 1, 1)
+  Iniciar (robotJuntador2, 2, 1)
+  Iniciar (robotJuntador3, 3, 1)
+fin

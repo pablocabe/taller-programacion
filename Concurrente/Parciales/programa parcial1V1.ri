@@ -1,0 +1,142 @@
+programa parcial1V1
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, roborFloreroAzul)
+    EnviarMensaje (2, robotPapeleroAzul)
+    EnviarMensaje (3, robotFloreroVerde)
+    EnviarMensaje (4, robotPapeleroVerde)
+  fin
+
+
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+
+
+  proceso juntarPapeles (ES cantP: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantP := cantP + 1
+  fin
+
+
+  proceso informarMaximo (E cantTotalAzul: numero ; E cantTotalVerde: numero)
+  comenzar
+    si (cantTotalAzul > cantTotalVerde)
+      Informar ('GanoAzul', 1)
+    sino
+      si (cantTotalVerde > cantTotalVerde)
+        Informar ('GanoVerde', 2)
+      sino
+        Informar ('Empate', 0)
+  fin
+
+
+areas
+  esquinaFiscalizador: AreaP (1, 1, 1, 1)
+  ciudadAzul: AreaPC (2, 4, 12, 24)
+  ciudadVerde: AreaPC (16, 4, 26, 24)
+robots
+
+  robot tipoFiscalizador
+  variables
+    ID, cantTotalAzul, cantTotalVerde, cantAuxiliar: numero
+  comenzar
+    asignarIDs
+    cantTotalAzul := 0
+    cantTotalVerde := 0
+    repetir 4
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (cantAuxiliar, roborFloreroAzul)
+        cantTotalAzul := cantTotalAzul + cantAuxiliar
+      sino
+        si (ID = 2)
+          RecibirMensaje (cantAuxiliar, robotPapeleroAzul)
+          cantTotalAzul := cantTotalAzul + cantAuxiliar
+        sino
+          si (ID = 3)
+            RecibirMensaje (cantAuxiliar, robotFloreroVerde)
+            cantTotalVerde := cantTotalVerde + cantAuxiliar
+          sino
+            RecibirMensaje (cantAuxiliar, robotPapeleroVerde)
+            cantTotalVerde := cantTotalVerde +  cantAuxiliar
+    informarMaximo (cantTotalAzul, cantTotalVerde)
+  fin
+  
+
+  robot tipoFlorero
+  variables
+    ID, cantF, avenida, calle, esquina: numero
+  comenzar
+    RecibirMensaje (ID, robotFiscalizador)
+    cantF := 0
+    derecha
+    esquina := 1
+    repetir 8
+      juntarFlores (cantF)
+      mover
+      esquina := esquina + 1
+      si (esquina = 5)
+        avenida := PosAv + 1
+        calle := PosCa
+        BloquearEsquina (avenida, calle)
+        mover
+        juntarFlores (cantF)
+        mover
+        LiberarEsquina (avenida, calle)
+    juntarFlores (cantF)
+    EnviarMensaje (ID, robotFiscalizador)
+    EnviarMensaje (cantF, robotFiscalizador)
+  fin
+
+
+  robot tipoPapelero
+  variables
+    ID, cantP, avenida, calle, esquina: numero
+  comenzar
+    RecibirMensaje (ID, robotFiscalizador)
+    cantP := 0
+    esquina := 1
+    repetir 18
+      juntarPapeles (cantP)
+      mover
+      esquina := esquina + 1
+      si (esquina = 8)
+        avenida := PosAv
+        calle := PosCa + 1
+        BloquearEsquina (avenida, calle)
+        mover
+        juntarPapeles (cantP)
+        mover
+        LiberarEsquina (avenida, calle)
+    juntarPapeles (cantP)
+    EnviarMensaje (ID, robotFiscalizador)
+    EnviarMensaje (cantP, robotFiscalizador)
+  fin
+
+
+variables
+  robotFiscalizador: tipoFiscalizador
+  roborFloreroAzul: tipoFlorero
+  robotPapeleroAzul: tipoPapelero
+  robotFloreroVerde: tipoFlorero
+  robotPapeleroVerde: tipoPapelero
+comenzar
+  AsignarArea (robotFiscalizador, esquinaFiscalizador)
+  AsignarArea (roborFloreroAzul, ciudadAzul)
+  AsignarArea (robotPapeleroAzul, ciudadAzul)
+  AsignarArea (robotFloreroVerde, ciudadVerde)
+  AsignarArea (robotPapeleroVerde, ciudadVerde)
+  Iniciar (robotFiscalizador, 1, 1)
+  Iniciar (roborFloreroAzul, 2, 12)
+  Iniciar (robotPapeleroAzul, 7, 4)
+  Iniciar (robotFloreroVerde, 16, 12)
+  Iniciar (robotPapeleroVerde, 21, 4)
+fin

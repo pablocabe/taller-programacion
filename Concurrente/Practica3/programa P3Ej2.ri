@@ -1,0 +1,200 @@
+programa P3Ej2
+procesos
+
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+
+
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+
+
+  proceso recorrerEscalonF (ES cantF: numero ; E cantPasos: numero)
+  comenzar
+    repetir cantPasos
+      mover
+    juntarFlores (cantF)
+    derecha
+    repetir cantPasos
+      mover
+    juntarFlores (cantF)
+    izquierda
+  fin
+
+
+  proceso recorridoFlorero1 (ES cantF: numero)
+  variables
+    cantPasos: numero
+    cantEscalones: numero
+  comenzar
+    cantPasos := 5
+    cantEscalones := 4
+    juntarFlores (cantF)
+    repetir cantEscalones
+      recorrerEscalonF (cantF, cantPasos)
+      cantPasos := cantPasos - 1
+  fin
+
+
+  proceso procesarEsquinaConflictivaF (ES cantF: numero)
+  comenzar
+    mover
+    juntarFlores (cantF)
+    derecha
+    BloquearEsquina (16, 16)
+    mover
+    EnviarMensaje (1, robotJ)
+    juntarFlores (cantF)
+    repetir 2
+      derecha
+    mover
+    LiberarEsquina (16, 16)
+  fin
+
+
+  proceso recorridoFlorero2 (ES cantF: numero)
+  variables
+    cantPasos: numero
+    cantEscalones: numero
+  comenzar
+    cantPasos := 2
+    cantEscalones := 4
+    repetir cantEscalones
+      recorrerEscalonF (cantF, cantPasos)
+      cantPasos := cantPasos + 1
+  fin
+
+
+  proceso juntarPapeles (ES cantP: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantP := cantP + 1
+  fin
+
+
+  proceso recorrerEscalonP (ES cantP: numero ; E cantPasos: numero)
+  comenzar
+    repetir cantPasos
+      mover
+    juntarPapeles (cantP)
+    izquierda
+    repetir cantPasos
+      mover
+    juntarPapeles (cantP)
+    derecha
+  fin
+
+
+  proceso recorridoPapelero1 (ES cantP: numero)
+  variables
+    cantPasos: numero
+    cantEscalones: numero
+  comenzar
+    cantPasos := 5
+    cantEscalones := 4
+    juntarPapeles (cantP)
+    repetir cantEscalones
+      recorrerEscalonP (cantP, cantPasos)
+      cantPasos := cantPasos - 1
+  fin
+
+
+  proceso procesarEsquinaConflictivaP (ES cantP: numero)
+  comenzar
+    mover
+    juntarPapeles (cantP)
+    izquierda
+    BloquearEsquina (16, 16)
+    mover
+    EnviarMensaje (2, robotJ)
+    juntarPapeles (cantP)
+    repetir 2
+      derecha
+    mover
+    LiberarEsquina (16, 16)
+  fin
+
+
+  proceso recorridoPapelero2 (ES cantP: numero)
+  variables
+    cantPasos: numero
+    cantEscalones: numero
+  comenzar
+    cantPasos := 2
+    cantEscalones := 4
+    repetir cantEscalones
+      recorrerEscalonP (cantP, cantPasos)
+      cantPasos := cantPasos + 1
+  fin
+
+
+areas
+  ciudadCompartida: AreaPC (16, 16, 16, 16)
+  CiudadJefe: AreaP (15, 1, 15, 1)
+  ciudadF1: AreaP (1, 1, 14, 30)
+  ciudadF2: AreaP (15, 2, 15, 30)
+  ciudadP1: AreaP (17, 1, 31, 30)
+robots
+
+  robot tipoFlorero
+  variables
+    cantF: numero
+  comenzar
+    cantF := 0
+    recorridoFlorero1 (cantF)
+    procesarEsquinaConflictivaF (cantF)
+    recorridoFlorero2 (cantF)
+    EnviarMensaje (V, robotJ)
+    Informar ('FloresJuntadas', cantF)
+  fin
+
+
+  robot tipoPapelero
+  variables
+    cantP: numero
+  comenzar
+    cantP := 0
+    recorridoPapelero1 (cantP)
+    procesarEsquinaConflictivaP (cantP)
+    recorridoPapelero2 (cantP)
+    EnviarMensaje (V, robotJ)
+    Informar ('PapelesJuntados', cantP)
+  fin
+
+
+  robot tipoJefe
+  variables
+    ID, ganador: numero
+    termino: boolean
+  comenzar
+    RecibirMensaje (ID, *)
+    ganador := ID
+    RecibirMensaje (ID, *)
+    repetir 2
+      RecibirMensaje (termino, *)
+    Informar ('Ganador', ganador)
+  fin
+
+variables
+  robotJ: tipoJefe
+  robotF: tipoFlorero
+  robotP: tipoPapelero
+comenzar
+  AsignarArea (robotJ, CiudadJefe)
+  AsignarArea (robotF, ciudadF1)
+  AsignarArea (robotF, ciudadF2)
+  AsignarArea (robotP, ciudadP1)
+  AsignarArea (robotF, ciudadCompartida)
+  AsignarArea (robotP, ciudadCompartida)
+  Iniciar (robotJ, 15, 1)
+  Iniciar (robotF, 1, 1)
+  Iniciar (robotP, 31, 1)
+fin

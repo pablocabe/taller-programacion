@@ -1,0 +1,47 @@
+programa P1Ej1
+procesos
+  proceso RecorrerAvenidaCompleta (ES cantF: numero ES cantEsquinasSinF: numero)
+  comenzar
+    repetir 99
+      si (~ HayFlorEnLaEsquina)
+        cantEsquinasSinF := cantEsquinasSinF + 1
+      sino
+        JuntarFlores (cantF)
+      mover
+    si (~ HayFlorEnLaEsquina)
+      cantEsquinasSinF := cantEsquinasSinF + 1
+    sino
+      JuntarFlores (cantF)
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+  fin
+  proceso JuntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+  proceso InformarVariables (E cantF: numero E cantEsquinasSinF: numero)
+  comenzar
+    Informar (cantF)
+    Informar (cantEsquinasSinF)
+  fin
+areas
+  ciudad: AreaP (1, 1, 1, 100)
+robots
+  robot tipo1
+  variables
+    cantF: numero
+    cantEsquinasSinF: numero
+  comenzar
+    cantF := 0
+    cantEsquinasSinF := 0
+    RecorrerAvenidaCompleta (cantF, cantEsquinasSinF)
+    InformarVariables (cantF, cantEsquinasSinF)
+  fin
+variables
+  robot1: tipo1
+comenzar
+  AsignarArea (robot1, ciudad)
+  Iniciar (robot1, 1, 1)
+fin

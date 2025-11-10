@@ -1,0 +1,50 @@
+programa P2Ej1a
+procesos
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+  proceso recorrerAvenida (ES cantF: numero)
+  comenzar
+    repetir 9
+      juntarFlores (cantF)
+      mover
+    juntarFlores (cantF)
+  fin
+areas
+  ciudad1: AreaP (1, 1, 1, 10)
+  ciudad2: AreaP (2, 11, 2, 20)
+robots
+  robot tipo1
+  variables
+    cantF, cantAux: numero
+  comenzar
+    cantF := 0
+    recorrerAvenida (cantF)
+    EnviarMensaje (cantF, robot2)
+    RecibirMensaje (cantAux, robot2)
+    si (cantF > cantAux)
+      Informar (cantF - cantAux)
+  fin
+  robot tipo2
+  variables
+    cantF, cantAux: numero
+  comenzar
+    cantF := 0
+    recorrerAvenida (cantF)
+    EnviarMensaje (cantF, robot1)
+    RecibirMensaje (cantAux, robot1)
+    si (cantF > cantAux)
+      Informar (cantF - cantAux)
+  fin
+variables
+  robot1: tipo1
+  robot2: tipo2
+comenzar
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  Iniciar (robot1, 1, 1)
+  Iniciar (robot2, 2, 11)
+fin

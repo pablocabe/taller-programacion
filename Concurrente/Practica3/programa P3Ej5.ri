@@ -1,0 +1,110 @@
+programa P3Ej5
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robot1)
+    EnviarMensaje (2, robot2)
+    EnviarMensaje (3, robot3)
+    EnviarMensaje (4, robot4)
+  fin
+
+
+  proceso buscarPapel (ES hayPapel: boolean)
+  variables
+    avIn, caIn: numero
+  comenzar
+    avIn := PosAv
+    caIn := PosCa
+    BloquearEsquina (11, 11)
+    Pos (11, 11)
+    si HayPapelEnLaEsquina
+      tomarPapel
+    sino
+      hayPapel := F
+    Pos (avIn, caIn)
+    LiberarEsquina (11, 11)
+  fin
+  
+
+  proceso actualizarMax (E distancia: numero ; E ID: numero ; ES distanciaMax: numero ; ES IDMax: numero)
+  comenzar
+    si (distancia > distanciaMax)
+      IDMax := ID
+      distanciaMax := distancia
+  fin
+
+
+areas
+  ciudadCompartida: AreaPC (11, 11, 11, 11)
+  ciudadCoordinador: AreaP (1, 1, 1, 1)
+  ciudad1: AreaP (4, 1, 4, 100)
+  ciudad2: AreaP (6, 1, 6, 100)
+  ciudad3: AreaP (8, 1, 8, 100)
+  ciudad4: AreaP (10, 1, 10, 100)
+
+robots
+
+  robot tipoCoordinador
+  variables
+    ID, IDMax, distancia, distanciaMax: numero
+  comenzar
+    asignarIDs
+    distanciaMax := 0
+    repetir 4
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (distancia, robot1)
+      sino
+        si (ID = 2)
+          RecibirMensaje (distancia, robot2)
+        sino
+          si (ID = 3)
+            RecibirMensaje (distancia, robot3)
+          sino
+            RecibirMensaje (distancia, robot4)
+      actualizarMax (distancia, ID, distanciaMax, IDMax)
+    Informar ('Robot', IDMax)
+  fin
+
+  
+  robot tipoCorredor
+  variables
+    hayPapel: boolean
+    ID, calleAlcanzada: numero
+  comenzar
+    hayPapel := V
+    RecibirMensaje (ID, robotCoordinador)
+    mientras ((hayPapel) & (PosCa < 100))
+      buscarPapel (hayPapel)
+      si (hayPapel)
+        depositarPapel
+        mover
+    calleAlcanzada := PosCa
+    EnviarMensaje (ID, robotCoordinador)
+    EnviarMensaje (calleAlcanzada, robotCoordinador)
+  fin
+
+
+variables
+  robotCoordinador: tipoCoordinador
+  robot1: tipoCorredor
+  robot2: tipoCorredor
+  robot3: tipoCorredor
+  robot4: tipoCorredor
+comenzar
+  AsignarArea (robotCoordinador, ciudadCoordinador)
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  AsignarArea (robot4, ciudad4)
+  AsignarArea (robot1, ciudadCompartida)
+  AsignarArea (robot2, ciudadCompartida)
+  AsignarArea (robot3, ciudadCompartida)
+  AsignarArea (robot4, ciudadCompartida)
+  Iniciar (robotCoordinador, 1, 1)
+  Iniciar (robot1, 4, 1)
+  Iniciar (robot2, 6, 1)
+  Iniciar (robot3, 8, 1)
+  Iniciar (robot4, 10, 1)
+fin

@@ -1,0 +1,174 @@
+programa P3Ej6a
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robot1)
+    EnviarMensaje (2, robot2)
+    EnviarMensaje (3, robot3)
+  fin
+
+
+  proceso invertir
+  comenzar
+    repetir 2
+      derecha
+  fin
+
+
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+
+
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+
+  proceso recorrerCalleR1 (E valorCalle: numero)
+  comenzar
+    Pos (1, valorCalle)
+    invertir
+    mientras ((HayFlorEnLaBolsa) & (PosAv < 100))
+      depositarFlor
+      mover
+  fin
+
+  
+  proceso recorrerCalleR2 (E valorCalle: numero)
+  comenzar
+    Pos (1, valorCalle)
+    invertir
+    mientras ((HayFlorEnLaBolsa) & (HayPapelEnLaBolsa) & (PosAv < 100))
+      depositarFlor
+      depositarPapel
+      mover
+  fin
+
+
+  proceso recorrerCalleR3 (E valorCalle: numero)
+  comenzar
+    Pos (1, valorCalle)
+    invertir
+    mientras ((HayPapelEnLaBolsa) & (PosAv < 100))
+      depositarPapel
+      mover
+  fin
+
+
+areas
+  ciudadCompartida: AreaPC (11, 11, 11, 11)
+  ciudadFiscalizador: AreaP (1, 1, 1, 1)
+  ciudad1: AreaP (4, 1, 4, 100)
+  ciudad2: AreaP (6, 1, 6, 100)
+  ciudad3: AreaP (8, 1, 8, 100)
+
+robots
+
+  robot tipoFiscalizador
+  variables
+    ID, valorCalle: numero
+  comenzar
+    asignarIDs
+    valorCalle := 20
+    repetir 3
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        EnviarMensaje (valorCalle, robot1)
+      sino
+        si (ID = 2)
+          EnviarMensaje (valorCalle, robot2)
+        sino
+          EnviarMensaje (valorCalle, robot3)
+      valorCalle := valorCalle + 1
+  fin
+
+  
+  robot tipoJuntador1
+  variables
+    ID: numero
+  comenzar
+    RecibirMensaje (ID, robotFiscalizador)
+    repetir 5
+      juntarFlores
+      mover
+    juntarFlores
+    derecha
+    repetir 2
+      mover
+      juntarFlores
+    BloquearEsquina (5, 7)
+    mover
+    juntarFlores
+    mover
+    LiberarEsquina (5, 7)
+    juntarFlores
+    mover
+    derecha
+
+
+    repetir 4
+      repetir 6
+        juntarFlores
+        mover
+      derecha
+    EnviarMensaje (ID, robotFiscalizador)
+    RecibirMensaje (valorCalle, robotFiscalizador)
+    recorrerCalleR1 (valorCalle)
+  fin
+
+
+  robot tipoJuntador2
+  variables
+    ID: numero
+  comenzar
+    RecibirMensaje (ID, robotFiscalizador)
+    repetir 4
+      repetir 10
+        juntarFlores
+        juntarPapeles
+        mover
+      derecha
+    EnviarMensaje (ID, robotFiscalizador)
+    RecibirMensaje (valorCalle, robotFiscalizador)
+    recorrerCalleR2 (valorCalle)
+  fin
+
+
+  robot tipoJuntador3
+  comenzar
+    RecibirMensaje (ID, robotFiscalizador)
+    repetir 4
+      repetir 7
+        juntarPapeles
+        mover
+      derecha
+    EnviarMensaje (ID, robotFiscalizador)
+    RecibirMensaje (valorCalle, robotFiscalizador)
+    recorrerCalleR3 (valorCalle)
+  fin
+
+
+variables
+  robotFiscalizador: tipoFiscalizador
+  robot1: tipoJuntador1
+  robot2: tipoJuntador2
+  robot3: tipoJuntador3
+comenzar
+  AsignarArea (robotFiscalizador, ciudadFiscalizador)
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  AsignarArea (robot1, ciudadCompartida)
+  AsignarArea (robot2, ciudadCompartida)
+  AsignarArea (robot3, ciudadCompartida)
+  Iniciar (robotFiscalizador, 1, 1)
+  Iniciar (robot1, 2, 2)
+  Iniciar (robot2, 5, 5)
+  Iniciar (robot3, 9, 9)
+fin

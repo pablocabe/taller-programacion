@@ -1,0 +1,107 @@
+programa parcial15V1
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, F1)
+    EnviarMensaje (2, F2)
+    EnviarMensaje (3, F3)
+  fin
+  
+  
+  proceso recorrerAvenida(E numAv: numero)
+  comenzar
+    Pos(numAv, 1)
+    repetir 99
+      mover
+  fin
+  
+  
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  
+  
+  proceso vaciarEsquina (E x: numero ; E y: numero)
+  variables
+    avInicial, caInicial: numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    BloquearEsquina (x, y)
+    Pos (x, y)
+    juntarFlores
+    Pos (avInicial, caInicial)
+    LiberarEsquina (x, y)
+  fin
+  
+areas
+  cuadrante: AreaPC (10, 10, 30, 30)
+  esquinaF1: AreaP (1, 1, 1, 1)
+  esquinaF2: AreaP (2, 1, 2, 1)
+  esquinaF3: AreaP (3, 1, 3, 1)
+  esquinaFiscalizador: AreaP (9, 9, 9, 9)
+  
+robots
+
+  robot tipoFiscalizador
+  variables
+    ID, x, y, cantTotalIntentos, cantAux: numero
+  comenzar
+    asignarIDs
+    cantTotalIntentos := 0
+    repetir 3
+      RecibirMensaje (cantAux, *)
+      cantTotalIntentos := cantTotalIntentos + cantAux
+    repetir cantTotalIntentos
+      Random (x, 10, 30) 
+      Random (y, 10, 30)
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        EnviarMensaje (x, F1)
+        EnviarMensaje (y, F1)
+      sino
+        si (ID = 2)
+          EnviarMensaje (x, F2)
+          EnviarMensaje (y, F2)
+        sino
+          EnviarMensaje (x, F3)
+          EnviarMensaje (y, F3)
+    Informar ('Intentos totales', cantTotalIntentos)
+  fin
+  
+  
+  robot tipoFlorero
+  variables
+    ID, cantIntentos, x, y: numero
+  comenzar
+    RecibirMensaje (ID, fiscalizador)
+    Random (cantIntentos, 2, 5)
+    EnviarMensaje (cantIntentos, fiscalizador)
+    repetir cantIntentos
+      EnviarMensaje (ID, fiscalizador)
+      RecibirMensaje (x, fiscalizador)
+      RecibirMensaje (y, fiscalizador)
+      vaciarEsquina (x, y)
+  fin
+  
+variables
+  fiscalizador: tipoFiscalizador
+  F1: tipoFlorero
+  F2: tipoFlorero
+  F3: tipoFlorero
+comenzar 
+  AsignarArea(fiscalizador, esquinaFiscalizador)
+  AsignarArea (F1, esquinaF1)
+  AsignarArea (F2, esquinaF2)
+  AsignarArea (F3, esquinaF3)
+  AsignarArea (F1, cuadrante)
+  AsignarArea (F2, cuadrante)
+  AsignarArea (F3, cuadrante)
+  Iniciar(fiscalizador, 9,9)
+  Iniciar (F1, 1, 1)
+  Iniciar (F2, 2, 1)
+  Iniciar (F3, 3, 1)
+fin

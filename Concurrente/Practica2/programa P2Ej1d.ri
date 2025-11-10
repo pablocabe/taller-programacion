@@ -1,0 +1,99 @@
+programa P2Ej1d
+procesos
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+  proceso recorrerAvenida (ES cantF: numero)
+  comenzar
+    repetir 9
+      juntarFlores (cantF)
+      mover
+    juntarFlores (cantF)
+  fin
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robot1)
+    EnviarMensaje (2, robot2)
+    EnviarMensaje (3, robot3)
+    EnviarMensaje (4, robot4)
+    EnviarMensaje (5, robot5)
+    EnviarMensaje (6, robot6)
+  fin
+areas
+  ciudad1: AreaP (1, 1, 1, 10)
+  ciudad2: AreaP (2, 11, 2, 20)
+  ciudad3: AreaP (3, 21, 3, 30)
+  ciudad4: AreaP (4, 31, 4, 40)
+  ciudad5: AreaP (5, 41, 5, 50)
+  ciudad6: AreaP (6, 51, 6, 60)
+  ciudad7: AreaP (2, 1, 2, 1)
+robots
+  robot tipoJefe
+  variables
+    ID, cantF, cantMax, IDMax: numero
+  comenzar
+    cantMax := 0
+    IDMax := 0
+    asignarIDs
+    repetir 6
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (cantF, robot1)
+      sino
+        si (ID = 2)
+          RecibirMensaje (cantF, robot2)
+        sino
+          si (ID = 3)
+            RecibirMensaje (cantF, robot3)
+          sino
+            si (ID = 4)
+              RecibirMensaje (cantF, robot4)
+            sino
+              si (ID = 5)
+                RecibirMensaje (cantF, robot5)
+              sino
+                si (ID = 6)
+                  RecibirMensaje (cantF, robot6)
+      si (cantF > cantMax)
+        cantMax := cantF
+        IDMax := ID
+    Informar (IDMax)
+    Informar (cantMax)
+  fin
+  robot tipoJuntador
+  variables
+    ID, cantF: numero
+  comenzar
+    RecibirMensaje (ID, robot7)
+    cantF := 0
+    recorrerAvenida (cantF)
+    EnviarMensaje (ID, robot7)
+    EnviarMensaje (cantF, robot7)
+  fin
+variables
+  robot1: tipoJuntador
+  robot2: tipoJuntador
+  robot3: tipoJuntador
+  robot4: tipoJuntador
+  robot5: tipoJuntador
+  robot6: tipoJuntador
+  robot7: tipoJefe
+comenzar
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  AsignarArea (robot4, ciudad4)
+  AsignarArea (robot5, ciudad5)
+  AsignarArea (robot6, ciudad6)
+  AsignarArea (robot7, ciudad7)
+  Iniciar (robot1, 1, 1)
+  Iniciar (robot2, 2, 11)
+  Iniciar (robot3, 3, 21)
+  Iniciar (robot4, 4, 31)
+  Iniciar (robot5, 5, 41)
+  Iniciar (robot6, 6, 51)
+  Iniciar (robot7, 2, 1)
+fin

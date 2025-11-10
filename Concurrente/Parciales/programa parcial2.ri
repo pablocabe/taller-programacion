@@ -1,0 +1,126 @@
+programa parcial2
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robotR1)
+    EnviarMensaje (2, robotR2)
+    EnviarMensaje (3, robotR3)
+  fin
+  
+  
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+  
+  
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+  
+  
+  proceso recorrerAvenidaFlores (ES cantF: numero)
+  comenzar
+    repetir 9
+      juntarFlores (cantF)
+      mover
+    juntarFlores (cantF)
+  fin
+  
+  
+  proceso recorrerAvenidaPapeles
+  comenzar
+    repetir 9
+      juntarPapeles
+      mover
+    juntarPapeles
+  fin
+  
+  {El enunciado no me pdie identificar al primero y al segundo espeficiamente}
+  
+  proceso notificarGanadores (E cant1: numero ; E cant2: numero ; E cant3: numero)
+  comenzar
+    si ((cant1 < cant2) & (cant1 < cant3))
+      EnviarMensaje (F, robotR1)
+      EnviarMensaje (V, robotR2)
+      EnviarMensaje (V, robotR3)
+    sino
+      si ((cant2 < cant1) & (cant2 < cant3))
+        EnviarMensaje (V, robotR1)
+        EnviarMensaje (F, robotR2)
+        EnviarMensaje (V, robotR3)
+      sino
+        EnviarMensaje (V, robotR1)
+        EnviarMensaje (V, robotR2)
+        EnviarMensaje (F, robotR3)
+  fin
+  
+areas
+  esquinaCoordinador: AreaP (1, 1, 1, 1)
+  avenidaR1: AreaP (5, 1, 5, 10)
+  avenidaR2: AreaP (6, 1, 6, 10)
+  avenidaR3: AreaP (7, 1, 7, 10)
+robots 
+
+  robot tipoCoordinador
+  variables
+    ID, IDGanador, IDPerdedor: numero
+    cant1, cant2, cant3: numero
+  comenzar
+    asignarIDs
+    repetir 3
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (cant1, robotR1)
+      sino
+        si (ID = 2)
+          RecibirMensaje (cant2, robotR2)
+        sino
+          RecibirMensaje (cant3, robotR3)
+    notificarGanadores (cant1, cant2, cant3)
+    RecibirMensaje (IDGanador, *)
+    RecibirMensaje (IDPerdedor, *)
+    Informar ('Ganador', IDGanador)
+  fin
+  
+  
+  robot tipoRecolector
+  variables
+    ok: boolean
+    ID, cantF: numero
+    avInicial, caInicial: numero
+  comenzar
+    cantF := 0
+    avInicial := PosAv
+    caInicial := PosCa
+    RecibirMensaje (ID, coordinador)
+    recorrerAvenidaFlores (cantF)
+    EnviarMensaje (ID, coordinador)
+    EnviarMensaje (cantF, coordinador)
+    RecibirMensaje (ok, coordinador)
+    si (ok)
+      Pos (avInicial, caInicial)
+      recorrerAvenidaPapeles
+      EnviarMensaje (ID, coordinador)
+  fin
+  
+variables
+  coordinador: tipoCoordinador
+  robotR1: tipoRecolector
+  robotR2: tipoRecolector
+  robotR3: tipoRecolector
+comenzar
+  AsignarArea(coordinador, esquinaCoordinador)
+  AsignarArea(robotR1, avenidaR1)
+  AsignarArea(robotR2, avenidaR2)
+  AsignarArea(robotR3, avenidaR3)
+  Iniciar(coordinador, 1, 1)
+  Iniciar(robotR1, 5, 1)
+  Iniciar(robotR2, 6, 1)
+  Iniciar(robotR3, 7, 1)
+fin

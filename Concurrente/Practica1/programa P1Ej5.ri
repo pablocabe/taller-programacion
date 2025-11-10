@@ -1,0 +1,151 @@
+programa P1Ej5
+procesos
+
+  proceso recorrer15Avenidas
+  variables
+    cantFlores: numero
+  comenzar
+    cantFlores := 0
+    repetir 14
+      juntarFlores (cantFlores)
+      mover
+    juntarFlores (cantFlores)
+    depositarFlores (cantFlores)
+  fin
+
+
+  proceso recorrer20Calles
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles := 0
+    repetir 19
+      juntarPapeles (cantPapeles)
+      mover
+    juntarPapeles (cantPapeles)
+    depositarPapeles (cantPapeles)
+  fin
+
+
+  proceso recorrer30Avenidas
+  variables
+    cantFlores: numero
+  comenzar
+    cantFlores := 0
+    repetir 29
+      juntarFlores (cantFlores)
+      mover
+    juntarFlores (cantFlores)
+    depositarFlores (cantFlores)
+  fin
+
+
+  proceso recorrer10Calles
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles := 0
+    repetir 9
+      juntarPapeles (cantPapeles)
+      mover
+    juntarPapeles (cantPapeles)
+    depositarPapeles (cantPapeles)
+  fin
+
+
+  proceso depositarFlores (E cantFlores: numero)
+  comenzar
+    repetir cantFlores
+      depositarFlor
+  fin
+
+
+  proceso juntarFlores (ES cantFlores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+
+
+  proceso juntarPapeles (ES cantPapeles: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+
+
+  proceso depositarPapeles (E cantPapeles: numero)
+  comenzar
+    repetir cantPapeles
+      depositarPapel
+  fin
+
+
+areas
+  ciudad1: AreaP (1, 75, 15, 75)
+  ciudad2: AreaP (1, 80, 15, 80)
+  ciudad3: AreaP (75, 80, 75, 99)
+  ciudad4: AreaP (80, 80, 80, 99)
+  ciudad5: AreaP (70, 10, 99, 10)
+  ciudad6: AreaP (70, 15, 99, 15)
+  ciudad7: AreaP (10, 1, 10, 10)
+  ciudad8: AreaP (15, 1, 15, 10)
+
+robots
+
+  robot tipo1
+  comenzar
+    derecha
+    recorrer15Avenidas
+    Pos (1, 80)
+    recorrer15Avenidas
+  fin
+
+
+  robot tipo2
+  comenzar
+    recorrer20Calles
+    Pos (80, 80)
+    recorrer20Calles
+  fin
+
+
+  robot tipo3
+  comenzar
+    derecha
+    recorrer30Avenidas
+    Pos (70, 15)
+    recorrer30Avenidas
+  fin
+
+
+  robot tipo4
+  comenzar
+    recorrer10Calles
+    Pos (15, 1)
+    recorrer10Calles
+  fin
+
+
+variables
+  robot1: tipo1
+  robot2: tipo2
+  robot3: tipo3
+  robot4: tipo4
+  
+comenzar
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot1, ciudad2)
+  AsignarArea (robot2, ciudad3)
+  AsignarArea (robot2, ciudad4)
+  AsignarArea (robot3, ciudad5)
+  AsignarArea (robot3, ciudad6)
+  AsignarArea (robot4, ciudad7)
+  AsignarArea (robot4, ciudad8)
+  Iniciar (robot1, 1, 75)
+  Iniciar (robot2, 75, 80)
+  Iniciar (robot3, 70, 10)
+  Iniciar (robot4, 10, 1)
+fin

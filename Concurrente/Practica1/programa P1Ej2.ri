@@ -1,0 +1,61 @@
+programa P1Ej2
+procesos
+  proceso juntarPapelesEsquina (ES cantP: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantP := cantP + 1
+  fin
+  proceso juntarPapeles
+  variables
+    cantP: numero
+  comenzar
+    cantP := 0
+    repetir 19
+      si (HayPapelEnLaEsquina)
+        juntarPapelesEsquina (cantP)
+      mover
+    Informar (cantP)
+  fin
+areas
+  ciudad1: AreaP (10, 10, 10, 29)
+  ciudad2: AreaP (10, 30, 29, 30)
+  ciudad3: AreaP (30, 11, 30, 30)
+  ciudad4: AreaP (11, 10, 30, 10)
+robots
+  robot tipo1
+  comenzar
+    juntarPapeles
+  fin
+  robot tipo2
+  comenzar
+    derecha
+    juntarPapeles
+  fin
+  robot tipo3
+  comenzar
+    repetir 2
+      derecha
+    juntarPapeles
+  fin
+  robot tipo4
+  comenzar
+    repetir 3
+      derecha
+    juntarPapeles
+  fin
+variables
+  robot1: tipo1
+  robot2: tipo2
+  robot3: tipo3
+  robot4: tipo4
+comenzar
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  AsignarArea (robot4, ciudad4)
+  Iniciar (robot1, 10, 10)
+  Iniciar (robot2, 10, 30)
+  Iniciar (robot3, 30, 30)
+  Iniciar (robot4, 30, 10)
+fin

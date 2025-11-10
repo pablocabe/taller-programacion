@@ -1,0 +1,111 @@
+programa P5Ej3
+procesos
+
+  proceso depositarFlores (ES cantF: numero)
+  variables
+    avenida, calle: numero
+  comenzar
+    avenida := PosAv
+    calle := PosCa
+    BloquearEsquina (10, 10)
+    Pos (10, 10)
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+      cantF := cantF - 1
+    Pos (avenida, calle)
+    LiberarEsquina (10, 10)
+  fin
+
+
+  proceso recorrerCalle
+  variables
+    cantF, cantEsquinas: numero
+  comenzar
+    cantF := 0
+    cantEsquinas := 0
+    repetir 99
+      si HayFlorEnLaEsquina
+        tomarFlor
+        cantF := cantF + 1
+        si (cantF = 10)
+          depositarFlores (cantF)
+          EnviarMensaje (V, robotCosechador)
+      mover
+      cantEsquinas := cantEsquinas + 1
+      si (cantEsquinas = 15)
+        depositarFlores (cantF)
+        cantEsquinas := 0
+        EnviarMensaje (V, robotCosechador)
+    si HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+      si (cantF = 10)
+        depositarFlores (cantF)
+        EnviarMensaje (V, robotCosechador)
+  fin
+
+
+  proceso cosecharFlores (ES cantTotal: numero)
+  comenzar
+    BloquearEsquina (10, 10)
+    Pos (10, 10)
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantTotal := cantTotal + 1
+    Pos (1, 5)
+    LiberarEsquina (10, 10)
+  fin
+
+
+areas
+  esquinaCosechador: AreaP (1, 5, 1, 5)
+  esquinaDeposito: AreaC (10, 10, 10, 10)
+  calleR1: AreaP (1, 3, 100, 3)
+  calleR2: AreaP (1, 4, 100, 4)
+robots
+
+  robot tipoCosechador
+  variables
+    cantTotal: numero
+    cosechar, ok1, ok2: boolean
+  comenzar
+    cantTotal := 0
+    RecibirMensaje (ok1, *)
+    RecibirMensaje (ok2, *)
+    mientras (ok1 | ok2)
+      RecibirMensaje (cosechar, *)
+      si (cosechar = V)
+        cosecharFlores (cantTotal)
+      sino
+        si (ok1 = V)
+          ok1 := F
+        sino
+          ok2 := F
+    Informar (cantTotal)
+  fin
+  
+
+  robot tipoRecolector
+  comenzar
+    derecha
+    EnviarMensaje (V, robotCosechador)
+    recorrerCalle
+    EnviarMensaje (F, robotCosechador)
+  fin
+
+
+variables
+  robotCosechador: tipoCosechador
+  robotRecolector1: tipoRecolector
+  robotRecolector2: tipoRecolector
+comenzar
+  AsignarArea (robotCosechador, esquinaCosechador)
+  AsignarArea (robotCosechador, esquinaDeposito)
+  AsignarArea (robotRecolector1, calleR1)
+  AsignarArea (robotRecolector2, calleR2)
+  AsignarArea (robotRecolector1, esquinaDeposito)
+  AsignarArea (robotRecolector2, esquinaDeposito)
+  Iniciar (robotCosechador, 1, 5)
+  Iniciar (robotRecolector1, 1, 3)
+  Iniciar (robotRecolector2, 1, 4)
+fin

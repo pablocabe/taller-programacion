@@ -1,0 +1,166 @@
+programa P5Ej1
+procesos
+
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, robotR1)
+    EnviarMensaje (2, robotR2)
+    EnviarMensaje (3, robotA1)
+    EnviarMensaje (4, robotA2)
+  fin
+
+
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+
+
+  proceso juntarPapeles (ES cantP: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantP := cantP + 1
+  fin
+
+
+  proceso recorrerAvenidasConflictivas (ES cantF: numero)
+  comenzar
+    BloquearEsquina (PosAv, 98)
+    mover
+    juntarFlores (cantF)
+    BloquearEsquina (PosAv, 99)
+    mover
+    LiberarEsquina (PosAv, 98)
+    juntarFlores (cantF)
+    mover
+    LiberarEsquina (PosAv, 99)
+  fin
+
+
+  proceso recorrerCallesConflictivas (ES cantP: numero)
+  comenzar
+    BloquearEsquina (2, PosCa)
+    mover
+    juntarPapeles (cantP)
+    BloquearEsquina (3, PosCa)
+    mover
+    LiberarEsquina (2, PosCa)
+    juntarPapeles (cantP)
+    mover
+    LiberarEsquina (3, PosCa)
+  fin
+
+
+  proceso procesoRojo (ES cantF: numero)
+  comenzar
+    mientras (PosCa < 97)
+      juntarFlores (cantF)
+      mover
+    juntarFlores (cantF)
+    recorrerAvenidasConflictivas (cantF)
+  fin
+
+
+  proceso procesoAzul (ES cantP: numero)
+  comenzar
+    derecha
+    juntarPapeles (cantP)
+    recorrerCallesConflictivas (cantP)
+    mientras (PosAv < 100)
+      juntarPapeles (cantP)
+      mover
+    juntarPapeles (cantP)
+  fin
+
+
+  proceso informarMaximo (E cantRojo: numero ; E cantAzul: numero)
+  comenzar
+    si (cantRojo > cantAzul)
+      Informar ('Ganador equipo rojo con', cantRojo)
+    sino
+      Informar ('Ganador equipo azul con', cantAzul)
+  fin
+
+
+areas
+  esquinaFiscalizador: AreaP (1, 1, 1, 1)
+  avenidaR1: AreaP (2, 1, 2, 100)
+  avenidaR2: AreaP (3, 1, 3, 100)
+  avenidaA1: AreaP (1, 98, 100, 98)
+  avenidaA2: AreaP (1, 99, 100, 99)
+robots
+
+  robot tipoFiscalizador
+  variables
+    ID, aux, cantRojo, cantAzul: numero
+  comenzar
+    asignarIDs
+    cantRojo := 0
+    cantAzul := 0
+    repetir 4
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (aux, robotR1)
+        cantRojo := cantRojo + aux
+      sino
+        si (ID = 2)
+          RecibirMensaje (aux, robotR2)
+          cantRojo := cantRojo + aux
+        sino
+          si (ID = 3)
+            RecibirMensaje (aux, robotA1)
+            cantAzul := cantAzul + aux
+          sino
+            RecibirMensaje (aux, robotA2)
+            cantAzul := cantAzul + aux
+    informarMaximo (cantRojo, cantAzul)
+  fin
+    
+
+  robot tipoRojo
+  variables
+    ID, cantF: numero
+  comenzar
+    RecibirMensaje (ID, robotFiscalizador)
+    cantF := 0
+    procesoRojo (cantF)
+    EnviarMensaje (ID, robotFiscalizador)
+    EnviarMensaje (cantF, robotFiscalizador)
+  fin
+
+
+  robot tipoaAzul
+  variables
+    ID, cantP: numero
+  comenzar
+    RecibirMensaje (ID, robotFiscalizador)
+    cantP := 0
+    procesoAzul (cantP)
+    EnviarMensaje (ID, robotFiscalizador)
+    EnviarMensaje (cantP, robotFiscalizador)
+  fin
+
+
+
+variables
+  robotFiscalizador: tipoFiscalizador
+  robotR1: tipoRojo
+  robotR2: tipoRojo
+  robotA1: tipoaAzul
+  robotA2: tipoaAzul
+comenzar
+  AsignarArea (robotFiscalizador, esquinaFiscalizador)
+  AsignarArea (robotR1, avenidaR1)
+  AsignarArea (robotR2, avenidaR2)
+  AsignarArea (robotA1, avenidaA1)
+  AsignarArea (robotA2, avenidaA2)
+  Iniciar (robotFiscalizador, 1, 1)
+  Iniciar (robotR1, 2, 1)
+  Iniciar (robotR2, 3, 1)
+  Iniciar (robotA1, 1, 98)
+  Iniciar (robotA2, 1, 99)
+fin

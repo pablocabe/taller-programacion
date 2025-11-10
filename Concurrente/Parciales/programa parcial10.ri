@@ -1,0 +1,69 @@
+programa parcial10
+procesos
+
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+  fin
+  
+  
+areas
+  esquinaFiscalizador: AreaP (20, 18, 20, 18)
+  esquinaDeposito: AreaPC (20, 20, 20, 20)
+  areaAzulL1: AreaP (10, 19, 19, 19)
+  areaAzulC: AreaPC (10, 20, 19, 20)
+  areaAzulL2: AreaP (10, 21, 19, 21)
+  areaVerdeL1: AreaP (21, 19, 30, 19)
+  areaVerdeC: AreaPC (21, 20, 30, 20)
+  areaVerdeL2: AreaP (21, 21, 30, 21)
+  
+robots
+
+  robot tipoFiscalizador
+  comenzar
+  
+  fin
+  
+  
+  robot tipoCentral
+  comenzar 
+    
+  fin
+  
+  robot tipoLateral
+  comenzar
+  
+  fin
+  
+variables
+  fiscalizador: tipoFiscalizador
+  rAzulC: tipoCentral
+  rVerdeC: tipoCentral
+  rAzulL1: tipoLateral
+  rAzulL2: tipoLateral
+  rVerdeL1: tipoLateral
+  rVerdeL2: tipoLateral
+comenzar 
+  AsignarArea(fiscalizador, esquinaFiscalizador)
+  AsignarArea (rAzulC, esquinaDeposito)
+  AsignarArea (rVerdeC, esquinaDeposito)
+  AsignarArea(rAzulL1, areaAzulL1)
+  AsignarArea(rAzulL1, areaAzulC)
+  AsignarArea(rAzulC, areaAzulC)
+  AsignarArea(rAzulL2, areaAzulL2)
+  AsignarArea(rAzulL2, areaAzulC)
+  AsignarArea(rVerdeL1, areaVerdeL1)
+  AsignarArea(rVerdeL1, areaVerdeC)
+  AsignarArea(rVerdeC, areaVerdeC)
+  AsignarArea(rVerdeL2, areaVerdeL2)
+  AsignarArea(rVerdeL2, areaVerdeC)
+  Iniciar(fiscalizador, 20, 18)
+  Iniciar(rAzulL1, 9, 19)
+  Iniciar(rAzulC, 9, 20)
+  Iniciar(rAzulL2, 9, 21)
+  Iniciar(rVerdeL1, 31, 19)
+  Iniciar(rVerdeC, 31, 20)
+  Iniciar(rVerdeL2, 31, 21)
+fin

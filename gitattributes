@@ -1,0 +1,7 @@
+# Normalizar todos los archivos de texto
+* text=auto eol=lf
+
+# Forzar LF para los archivos de código fuente
+*.java text eol=lf
+*.ri text eol=lf
+*.md text eol=lf

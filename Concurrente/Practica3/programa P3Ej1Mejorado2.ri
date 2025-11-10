@@ -1,0 +1,133 @@
+programa P3Ej1Mejorado
+procesos
+
+  proceso juntarFlores (ES cantFlores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+
+
+  proceso juntarPapeles (ES cantPapeles: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+
+
+  proceso depositarFlores (E cantFlores: numero)
+  comenzar
+    repetir cantFlores
+      depositarFlor
+  fin
+
+
+  proceso depositarPapeles (E cantPapeles: numero)
+  comenzar
+    repetir cantPapeles
+      depositarPapel
+  fin
+
+  proceso depositarElementos (E cantElementos: numero ; E avenidaInicial: numero ; E calleInicial: numero ; E esPapelero: boolean)
+  comenzar
+    BloquearEsquina (10, 10)
+    Pos (10, 10)
+    si (esPapelero)
+      depositarPapeles (cantElementos)
+    sino
+      depositarFlores (cantElementos)
+    Pos (avenidaInicial, calleInicial)
+    LiberarEsquina (10, 10)
+  fin
+
+  proceso juntarElementos (ES cantElementos: numero ; E cantLoop: numero ; E avenidaInicial: numero ; E calleInicial: numero ; E esPapelero: boolean)
+  variables
+    avenida, calle: numero
+  comenzar
+    avenidaInicial := PosAv
+    calleInicial := PosCa
+    repetir cantLoop
+      si (esPapelero)
+        Random (avenida, 6, 10)
+        Random (calle, 1, 9)
+        BloquearEsquina (avenida, calle)
+        Pos (avenida, calle)
+        si HayPapelEnLaEsquina
+          juntarPapeles (cantElementos)
+      sino
+        Random (avenida, 1, 5)
+        Random (calle, 1, 10)
+        BloquearEsquina (avenida, calle)
+        Pos (avenida, calle)
+        si HayFlorEnLaEsquina
+          juntarFlores (cantElementos)
+      Pos (avenidaInicial, calleInicial)
+      LiberarEsquina (avenida, calle)
+  fin
+  
+
+areas
+  ciudadCompartida: AreaC (10, 10, 10, 10)
+  ciudadFloreros: AreaPC (1, 1, 5, 10)
+  ciudadPapeleros: AreaPC (6, 1, 10, 9)
+  ciudadF1: AreaP (6, 10, 6, 10)
+  ciudadF2: AreaP (7, 10, 7, 10)
+  ciudadP1: AreaP (8, 10, 8, 10)
+  ciudadP2: AreaP (9, 10, 9, 10)
+robots
+
+  robot tipoFlorero
+  variables
+    cantLoop, cantFlores, avenidaInicial, calleInicial: numero
+    esPapelero: boolean
+  comenzar
+    avenidaInicial := PosAv
+    calleInicial := PosCa
+    cantLoop := 5
+    cantFlores := 0
+    esPapelero := F
+    juntarElementos (cantFlores, cantLoop, avenidaInicial, calleInicial, esPapelero)
+    depositarElementos (cantFlores, avenidaInicial, calleInicial, esPapelero)
+  fin
+
+
+  robot tipoPapelero
+  variables
+    cantLoop, cantPapeles, avenidaInicial, calleInicial: numero
+    esPapelero: boolean
+  comenzar
+    avenidaInicial := PosAv
+    calleInicial := PosCa
+    cantLoop := 3
+    cantPapeles := 0
+    esPapelero := V
+    juntarElementos (cantPapeles, cantLoop, avenidaInicial, calleInicial, esPapelero)
+    depositarElementos (cantPapeles, avenidaInicial, calleInicial, esPapelero)
+  fin
+
+
+variables
+  robotF1: tipoFlorero
+  robotF2: tipoFlorero
+  robotP1: tipoPapelero
+  robotP2: tipoPapelero
+comenzar
+  AsignarArea (robotF1, ciudadCompartida)
+  AsignarArea (robotF2, ciudadCompartida)
+  AsignarArea (robotP1, ciudadCompartida)
+  AsignarArea (robotP2, ciudadCompartida)
+  AsignarArea (robotF1, ciudadFloreros)
+  AsignarArea (robotF2, ciudadFloreros)
+  AsignarArea (robotP1, ciudadPapeleros)
+  AsignarArea (robotP2, ciudadPapeleros)
+  AsignarArea (robotF1, ciudadF1)
+  AsignarArea (robotF2, ciudadF2)
+  AsignarArea (robotP1, ciudadP1)
+  AsignarArea (robotP2, ciudadP2)
+  Iniciar (robotF1, 6, 10)
+  Iniciar (robotF2, 7, 10)
+  Iniciar (robotP1, 8, 10)
+  Iniciar (robotP2, 9, 10)
+fin

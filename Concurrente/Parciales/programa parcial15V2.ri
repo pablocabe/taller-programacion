@@ -1,0 +1,110 @@
+programa parcial15V2
+procesos
+
+  proceso asignarIDs
+  comenzar
+    EnviarMensaje (1, F1)
+    EnviarMensaje (2, F2)
+    EnviarMensaje (3, F3)
+  fin
+  
+  
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  
+  
+  proceso vaciarEsquina (E x: numero ; E y: numero)
+  variables
+    avInicial, caInicial: numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    BloquearEsquina (x, y)
+    Pos (x, y)
+    juntarFlores
+    Pos (avInicial, caInicial)
+    LiberarEsquina (x, y)
+  fin
+  
+areas
+  cuadrante: AreaPC (10, 10, 30, 30)
+  esquinaF1: AreaP (1, 1, 1, 1)
+  esquinaF2: AreaP (2, 1, 2, 1)
+  esquinaF3: AreaP (3, 1, 3, 1)
+  esquinaFiscalizador: AreaP (9, 9, 9, 9)
+  
+robots
+
+  robot tipoFiscalizador
+  variables
+    ID, x, y: numero
+    cantTotalIntentos, cantF1, cantF2, cantF3: numero
+  comenzar
+    asignarIDs
+    repetir 3
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (cantF1, F1)
+      sino
+        si (ID = 2)
+          RecibirMensaje (cantF2, F2)
+        sino
+          RecibirMensaje (cantF3, F3)
+    cantTotalIntentos := cantF1 + cantF2 + cantF3
+    mientras ((cantF1 > 0) | (cantF2 > 0) | (cantF3 > 0))
+      Random (x, 10, 30) 
+      Random (y, 10, 30)
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        EnviarMensaje (x, F1)
+        EnviarMensaje (y, F1)
+        cantF1 := cantF1 - 1
+      sino
+        si (ID = 2)
+          EnviarMensaje (x, F2)
+          EnviarMensaje (y, F2)
+          cantF2 := cantF2 - 1
+        sino
+          EnviarMensaje (x, F3)
+          EnviarMensaje (y, F3)
+          cantF3 := cantF3 - 1
+    Informar ('Intentos totales', cantTotalIntentos)
+  fin
+  
+  
+  robot tipoFlorero
+  variables
+    ID, cantIntentos, x, y: numero
+  comenzar
+    RecibirMensaje (ID, fiscalizador)
+    Random (cantIntentos, 2, 5)
+    EnviarMensaje (ID, fiscalizador)
+    EnviarMensaje (cantIntentos, fiscalizador)
+    repetir cantIntentos
+      EnviarMensaje (ID, fiscalizador)
+      RecibirMensaje (x, fiscalizador)
+      RecibirMensaje (y, fiscalizador)
+      vaciarEsquina (x, y)
+  fin
+  
+variables
+  fiscalizador: tipoFiscalizador
+  F1: tipoFlorero
+  F2: tipoFlorero
+  F3: tipoFlorero
+comenzar 
+  AsignarArea(fiscalizador, esquinaFiscalizador)
+  AsignarArea (F1, esquinaF1)
+  AsignarArea (F2, esquinaF2)
+  AsignarArea (F3, esquinaF3)
+  AsignarArea (F1, cuadrante)
+  AsignarArea (F2, cuadrante)
+  AsignarArea (F3, cuadrante)
+  Iniciar(fiscalizador, 9,9)
+  Iniciar (F1, 1, 1)
+  Iniciar (F2, 2, 1)
+  Iniciar (F3, 3, 1)
+fin

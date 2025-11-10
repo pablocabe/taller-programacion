@@ -1,0 +1,77 @@
+programa P1Ej3
+procesos
+  proceso contarPapeles (ES cantP: numero)
+  variables
+    aux: numero
+  comenzar
+    aux := 0
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      aux := aux + 1
+      cantP := cantP + 1
+    repetir aux
+      depositarPapel
+  fin
+  proceso contarFlores (ES cantF:numero)
+  variables
+    aux: numero
+  comenzar
+    aux := 0
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      aux := aux + 1
+      cantF := cantF + 1
+    repetir aux
+      depositarFlor
+  fin
+  proceso recorrerEscalon (E pasos: numero ES cantF: numero ES cantP: numero)
+  comenzar
+    repetir 2
+      repetir pasos
+        contarFlores(cantF)
+        contarPapeles (cantP)
+        mover
+      derecha
+    repetir 2
+      derecha
+  fin
+  proceso recorrerEscalera (ES cant: numero)
+  variables
+    pasos: numero
+    cantP: numero
+    cantF: numero
+  comenzar
+    pasos := 1
+    repetir 4
+      cantF := 0
+      cantP := 0
+      recorrerEscalon (pasos, cantF, cantP)
+      si ((cantP - cantF) = 1)
+        cant := cant + 1
+      pasos := pasos + 1
+  fin
+areas
+  ciudad1: AreaP (12, 14, 22, 24)
+  ciudad2: AreaP (17, 10, 27, 20)
+  ciudad3: AreaP (22, 6, 32, 16)
+robots
+  robot tipo1
+  variables
+    cant: numero
+  comenzar
+    cant := 0
+    recorrerEscalera (cant)
+    Informar (cant)
+  fin
+variables
+  robot1: tipo1
+  robot2: tipo1
+  robot3: tipo1
+comenzar
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  Iniciar (robot1, 12, 14)
+  Iniciar (robot2, 17, 10)
+  Iniciar (robot3, 22, 6)
+fin

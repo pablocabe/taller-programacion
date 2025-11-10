@@ -1,0 +1,124 @@
+programa P3Ej3
+procesos
+
+  proceso aisgnarIDs
+  comenzar
+    EnviarMensaje (1, robot1)
+    EnviarMensaje (2, robot2)
+    EnviarMensaje (3, robot3)
+    EnviarMensaje (4, robot4)
+  fin
+
+
+  proceso enviarCoordenadas (E x: numero ; E y: numero)
+  comenzar
+    EnviarMensaje (x, robot1)
+    EnviarMensaje (y, robot1)
+    EnviarMensaje (x, robot2)
+    EnviarMensaje (y, robot2)
+    EnviarMensaje (x, robot3)
+    EnviarMensaje (y, robot3)
+    EnviarMensaje (x, robot4)
+    EnviarMensaje (y, robot4)
+  fin
+
+  
+  proceso procesarEsquina (ES cantF: numero ; E x: numero ; E y: numero)
+  variables
+    avInicial, caInicial: numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    BloquearEsquina (x, y)
+    Pos (x, y)
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantF := cantF + 1
+      Pos (avInicial, caInicial)
+      LiberarEsquina (x, y)
+      BloquearEsquina (x, y)
+      Pos (x, y)
+    Pos (avInicial, caInicial)
+    LiberarEsquina (x, y)
+  fin
+
+
+  proceso actualizarMaximo (ES IDMax: numero ; ES cantMax: numero ; E ID: numero; E cantF: numero)
+  comenzar
+    si (cantF > cantMax)
+      IDMax := ID
+      cantMax := cantF
+  fin
+
+
+areas
+  ciudadCompartida: AreaPC (2, 2, 10, 10)
+  ciudadJefe: AreaP (1, 1, 1, 1)
+  ciudad1: AreaP (2, 1, 2, 1)
+  ciudad2: AreaP (3, 1, 3, 1)
+  ciudad3: AreaP (4, 1, 4, 1)
+  ciudad4: AreaP (5, 1, 5, 1)
+robots
+
+  robot tipoJefe
+  variables
+    avenida, calle, ID, cantF, IDMax, cantMax: numero
+  comenzar
+    aisgnarIDs
+    Random (avenida, 2, 10)
+    Random (calle, 2, 10)
+    enviarCoordenadas (avenida, calle)
+    cantMax := 0
+    repetir 4
+      RecibirMensaje (ID, *)
+      si (ID = 1)
+        RecibirMensaje (cantF, robot1)
+      sino
+        si (ID = 2)
+          RecibirMensaje (cantF, robot2)
+        sino
+          si (ID = 3) 
+            RecibirMensaje (cantF, robot3)
+          sino
+            RecibirMensaje (cantF, robot4)
+      actualizarMaximo (IDMax, cantMax, ID, cantF)
+    Informar (IDMax)
+  fin
+
+
+  robot tipoJuntador
+  variables
+    ID, x, y cantF: numero
+  comenzar
+    cantF := 0
+    RecibirMensaje (ID, robotJefe)
+    RecibirMensaje (x, robotJefe)
+    RecibirMensaje (y, robotJefe)
+    procesarEsquina (cantF, x, y)
+    EnviarMensaje (ID, robotJefe)
+    EnviarMensaje (cantF, robotJefe)
+  fin
+
+
+variables
+  robotJefe: tipoJefe
+  robot1: tipoJuntador
+  robot2: tipoJuntador
+  robot3: tipoJuntador
+  robot4: tipoJuntador
+comenzar
+  AsignarArea (robotJefe, ciudadJefe)
+  AsignarArea (robot1, ciudad1)
+  AsignarArea (robot2, ciudad2)
+  AsignarArea (robot3, ciudad3)
+  AsignarArea (robot4, ciudad4)
+  AsignarArea (robot1, ciudadCompartida)
+  AsignarArea (robot2, ciudadCompartida)
+  AsignarArea (robot3, ciudadCompartida)
+  AsignarArea (robot4, ciudadCompartida)
+  Iniciar (robotJefe, 1, 1)
+  Iniciar (robot1, 2, 1)
+  Iniciar (robot2, 3, 1)
+  Iniciar (robot3, 4, 1)
+  Iniciar (robot4, 5, 1)
+fin
