@@ -6,6 +6,7 @@ Este repositorio está dividido en los tres módulos de la cursada:
 
 * [Imperativo](./Imperativo/): Ejercicios resueltos del primer módulo (Pascal).
 * [Objetos](./Objetos/): Ejercicios resueltos del segundo módulo (Java).
-* [Concuerrente](./Concurrente/): Ejercicios resueltos del tercer módulo (R-Info).
+* [Concurrente](./Concurrente/): Ejercicios resueltos del tercer módulo (R-Info).
+
 
 
