@@ -8,9 +8,9 @@ Prácticas resueltas y parciales de Taller de Programación (2024).
 ### 📂 Estructura
 Este repositorio está dividido en los tres módulos de la cursada:
 
-* [Imperativo](./Imperativo/): Ejercicios resueltos del primer módulo (Pascal).
-* [Objetos](./Objetos/): Ejercicios resueltos del segundo módulo (Java).
-* [Concurrente](./Concurrente/): Ejercicios resueltos del tercer módulo (R-Info).
+* [Imperativo](./imperativo/): Ejercicios resueltos del primer módulo (Pascal).
+* [Objetos](./objetos/): Ejercicios resueltos del segundo módulo (Java).
+* [Concurrente](./concurrente/): Ejercicios resueltos del tercer módulo (R-Info).
 
 
 
