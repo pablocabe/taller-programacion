@@ -10,7 +10,7 @@ type
 	end;
 	
 	registroVector = record
-		material: subMaterial; // acá no se si lo declaré así o puse codigo o codArtesanía
+		material: subMaterial;
 		cantidad: integer;
 	end;
 	
@@ -88,7 +88,7 @@ function calcularCantidad (a: arbol; DNIX: integer): integer;
 begin
 	if (a = nil) then
 		calcularCantidad := 0
-	else if (DNIX > a^.dato.DNI) then // acá no se si pregunté así o DNIX < a^.dato.DNI
+	else if (DNIX > a^.dato.DNI) then
 		calcularCantidad := 1 + calcularCantidad (a^.HI, DNIX) + calcularCantidad (a^.HD, DNIX)
 	else
 		calcularCantidad := calcularCantidad (a^.HI, DNIX);
@@ -141,31 +141,3 @@ begin
 	writeln ('El material base con mayor cantidad de artesanias es: ', materialMax); 
 end.
 
-{Diferencia clave ChatGPT:
-En el primer código, verificas si DNIX > a^.dato.DNI (lo cual es equivalente a a^.dato.DNI < DNIX del segundo código). 
-Ambas expresiones lógicas son equivalentes y deberían dar el mismo resultado. Sin embargo, el orden de los operandos es diferente.
-El segundo código compara si el DNI del nodo es menor al DNI buscado, mientras que el primero lo hace al revés, 
-verificando si el DNI buscado es mayor que el del nodo.
-Matemáticamente ambos son equivalentes, y no debería haber diferencias en el comportamiento del programa en términos de resultados. 
- Sin embargo, es posible que la confusión provenga del flujo o de cómo está estructurado el árbol, 
-pero conceptualmente ambas versiones deberían funcionar de manera idéntica.
-
-function calcularCantidad (a: arbol; DNIX: integer): integer;
-begin
-	if (a = nil) then
-		calcularCantidad := 0
-	else if (DNIX > a^.dato.DNI) then
-		calcularCantidad := 1 + calcularCantidad (a^.HI, DNIX) + calcularCantidad (a^.HD, DNIX)
-	else
-		calcularCantidad := calcularCantidad (a^.HI, DNIX);
-end;
-
-function calcularCantidad (a: arbol; DNIX: integer): integer;
-begin
-    if (a = nil) then
-        calcularCantidad := 0
-    else if (a^.dato.DNI < DNIX) then
-        calcularCantidad := 1 + calcularCantidad (a^.HI, DNIX) + calcularCantidad (a^.HD, DNIX)
-    else
-        calcularCantidad := calcularCantidad (a^.HI, DNIX); 
-end;}
