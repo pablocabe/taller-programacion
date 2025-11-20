@@ -12,7 +12,7 @@ package parcial9;
 public class Estacionamiento {
     private String direccion;
     private double costoHora;
-    private Vehiculo [] [] matrizEstacionamiento; // S sectore y V vehículos por sector
+    private Vehiculo [] [] matrizEstacionamiento; // S sectores y V vehículos por sector
     private int cantidadSectores;
     private int cantidadVehiculos;
     
@@ -86,3 +86,4 @@ public class Estacionamiento {
         return aux;
     }
 }
+
