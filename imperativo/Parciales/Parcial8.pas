@@ -140,4 +140,3 @@ begin
 	ordenarVector (v, materialMax);
 	writeln ('El material base con mayor cantidad de artesanias es: ', materialMax); 
 end.
-
